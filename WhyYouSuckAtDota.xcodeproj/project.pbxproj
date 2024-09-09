@@ -7,13 +7,15 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		B35442412C911EA200278629 /* DataView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B35442402C911EA200278629 /* DataView.swift */; };
 		B3CE70902C8E7B1100E39FC5 /* WhyYouSuckAtDotaApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE708F2C8E7B1100E39FC5 /* WhyYouSuckAtDotaApp.swift */; };
-		B3CE70922C8E7B1100E39FC5 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70912C8E7B1100E39FC5 /* ContentView.swift */; };
+		B3CE70922C8E7B1100E39FC5 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70912C8E7B1100E39FC5 /* SearchView.swift */; };
 		B3CE70942C8E7B1100E39FC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3CE70932C8E7B1100E39FC5 /* Assets.xcassets */; };
 		B3CE70972C8E7B1100E39FC5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = B3CE70962C8E7B1100E39FC5 /* Preview Assets.xcassets */; };
 		B3CE70A12C8E7B1100E39FC5 /* WhyYouSuckAtDotaTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70A02C8E7B1100E39FC5 /* WhyYouSuckAtDotaTests.swift */; };
 		B3CE70AB2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70AA2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift */; };
 		B3CE70AD2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70AC2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift */; };
+		B3CE70BA2C8E7B9100E39FC5 /* OpenDotaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -34,9 +36,10 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		B35442402C911EA200278629 /* DataView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataView.swift; sourceTree = "<group>"; };
 		B3CE708C2C8E7B1100E39FC5 /* WhyYouSuckAtDota.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WhyYouSuckAtDota.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CE708F2C8E7B1100E39FC5 /* WhyYouSuckAtDotaApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaApp.swift; sourceTree = "<group>"; };
-		B3CE70912C8E7B1100E39FC5 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B3CE70912C8E7B1100E39FC5 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		B3CE70932C8E7B1100E39FC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		B3CE70962C8E7B1100E39FC5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		B3CE709C2C8E7B1100E39FC5 /* WhyYouSuckAtDotaTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhyYouSuckAtDotaTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -44,6 +47,7 @@
 		B3CE70A62C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WhyYouSuckAtDotaUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B3CE70AA2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaUITests.swift; sourceTree = "<group>"; };
 		B3CE70AC2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenDotaService.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,7 +99,9 @@
 			isa = PBXGroup;
 			children = (
 				B3CE708F2C8E7B1100E39FC5 /* WhyYouSuckAtDotaApp.swift */,
-				B3CE70912C8E7B1100E39FC5 /* ContentView.swift */,
+				B3CE70912C8E7B1100E39FC5 /* SearchView.swift */,
+				B35442402C911EA200278629 /* DataView.swift */,
+				B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */,
 				B3CE70932C8E7B1100E39FC5 /* Assets.xcassets */,
 				B3CE70952C8E7B1100E39FC5 /* Preview Content */,
 			);
@@ -257,8 +263,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				B3CE70922C8E7B1100E39FC5 /* ContentView.swift in Sources */,
+				B3CE70922C8E7B1100E39FC5 /* SearchView.swift in Sources */,
 				B3CE70902C8E7B1100E39FC5 /* WhyYouSuckAtDotaApp.swift in Sources */,
+				B35442412C911EA200278629 /* DataView.swift in Sources */,
+				B3CE70BA2C8E7B9100E39FC5 /* OpenDotaService.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

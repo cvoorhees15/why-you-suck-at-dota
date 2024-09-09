@@ -11,7 +11,7 @@ import SwiftUI
 struct WhyYouSuckAtDotaApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            SearchView()
         }
     }
 }
