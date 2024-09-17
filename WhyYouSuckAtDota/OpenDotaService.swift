@@ -29,39 +29,40 @@ class OpenDotaService
     
     struct Player: Codable
     {
-        let hero_id: Int
-        let item_0: Int
-        let item_1: Int
-        let item_2: Int
-        let item_3: Int
-        let item_4: Int
-        let item_5: Int
-        let item_6: Int
-        let backpack_0: Int
-        let backpack_1: Int
-        let backpack_2: Int
-        let kills: Int
-        let deaths: Int
-        let assists: Int
-        let last_hits: Int
-        let denies: Int
-        let gold_per_min: Int
-        let xp_per_min: Int
-        let level: Int
-        let net_worth: Int
+        let account_id: Int?
+        let hero_id: Int?
+        let item_0: Int?
+        let item_1: Int?
+        let item_2: Int?
+        let item_3: Int?
+        let item_4: Int?
+        let item_5: Int?
+        let backpack_0: Int?
+        let backpack_1: Int?
+        let backpack_2: Int?
+        let kills: Int?
+        let deaths: Int?
+        let assists: Int?
+        let last_hits: Int?
+        let denies: Int?
+        let gold_per_min: Int?
+        let xp_per_min: Int?
+        let level: Int?
+        let net_worth: Int?
         let aghanims_scepter: Int? //Bool
         let aghanims_shard: Int? //Bool
-        let hero_damage: Int
-        let tower_damage: Int
-        let hero_healing: Int
-        let ability_upgrades_arr: [Int]
-        let duration: Int
-        let win: Int //Bool
-        let lose: Int //Bool
-        let total_gold: Int
-        let total_xp: Int
-        let kills_per_min: Float
-        let kda: Int
+        let hero_damage: Int?
+        let tower_damage: Int?
+        let hero_healing: Int?
+        let ability_upgrades_arr: [Int]?
+        let start_time: Int?
+        let duration: Int?
+        let win: Int? //Bool
+        let lose: Int? //Bool
+        let total_gold: Int?
+        let total_xp: Int?
+//        let kills_per_min: Float?
+//        let kda: Double?
     }
     
     struct SearchResult: Codable
@@ -74,7 +75,6 @@ class OpenDotaService
     struct Match: Codable
     {
         let players: [Player]
-        let first_bood_time: Int
     }
     
     struct RecentMatch: Codable
@@ -90,6 +90,8 @@ class OpenDotaService
     }
     // *****************************************
     
+    // API Calls
+    // *****************************************
     func openDotaAPICall(endpoint: String) async throws -> Data
     {
         // Create url for API call
@@ -172,5 +174,95 @@ class OpenDotaService
         } catch {
             throw ApiError.invalidData
         }
+    }
+    // *****************************************
+    
+    // Get match ID numbers from RecentMatch structs
+    func getRecentMatchIDs(recentMatches: [RecentMatch]) -> [Int]
+    {
+        var matchIDs: [Int] = []
+        
+        for recentMatch in recentMatches {
+            matchIDs.append(recentMatch.match_id)
+        }
+        
+        return matchIDs
+    }
+    
+    // Get pro match ID numbers from ProMatch structs
+    func getProMatchIDs(proMatches: [ProMatch]) -> [Int]
+    {
+        var matchIDs: [Int] = []
+        
+        for proMatch in proMatches {
+            matchIDs.append(proMatch.match_id)
+        }
+        
+        return matchIDs
+    }
+    
+    // Get player match data for the selected player
+    func getPlayerMatchData(matchIDs: [Int], accountID: Int) async throws -> [Player]
+    {
+        var matches: [Match] = []
+        var playerData: [Player] = []
+        
+        // get all match objects for the selected player
+        for matchID in matchIDs {
+            matches.append(try await fetchMatch(matchId: matchID))
+        }
+        
+        // get all player data objects for the selected player
+        for match in matches {
+            for player in match.players {
+                if (player.account_id != nil && player.account_id == accountID) {
+                    playerData.append(player)
+                }
+            }
+        }
+        return playerData
+    }
+    
+    // Get pro player match data from 20 random pro matches
+    func getProMatchData(matchIDs: [Int], accountID: Int) async throws -> [Player]
+    {
+        var matches: [Match] = []
+        var proData: [Player] = []
+        var count = 0
+        
+        // get first 20 pro match objects
+        for matchID in matchIDs {
+            if (count < 20) {
+                matches.append(try await fetchMatch(matchId: matchID))
+                print(count)
+                count+=1
+            }
+            else {
+                break
+            }
+                
+        }
+        // Get pro player data from the 20 matches
+        for match in matches {
+            for proPlayer in match.players {
+                proData.append(proPlayer)
+            }
+        }
+        return proData
+    }
+    
+    // Get average GPM from multiple matches worth of player data
+    func getAverageGPM(Data: [Player]) -> Int
+    {
+        var GPM = 0
+        
+        // Pull GPM from players recent match data
+        for player in Data {
+            GPM += player.gold_per_min ?? 0
+        }
+        // Find avg by dividing by number of matches
+        GPM = GPM/Data.count
+        
+        return GPM
     }
 }

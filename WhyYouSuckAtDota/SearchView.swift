@@ -29,7 +29,7 @@ struct SearchView: View {
                     }
                     .frame(width: 44, height: 44)
                     
-                    NavigationLink(searchResult.personaname, destination: DataView(account_ID: searchResult.account_id))
+                    NavigationLink(searchResult.personaname, destination: PlayerDataView(account_ID: searchResult.account_id, personaname: searchResult.personaname))
                         .font(.title3)
                         .fontWeight(.bold)
                 }
@@ -41,7 +41,6 @@ struct SearchView: View {
                 Task {
                     do {
                         searchResults = try await ODS.fetchSearchResults(personaname: searchTerm)
-                        
                     }
                     catch OpenDotaService.ApiError.invalidURL {
                         print ("invalid URL")
