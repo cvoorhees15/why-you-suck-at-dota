@@ -8,6 +8,8 @@
 import Foundation
 class OpenDotaService
 {
+    // Error Enums
+    // *****************************************
     // Open Dota API call potential errors
     enum ApiError: Error {
         case invalidURL
@@ -15,8 +17,15 @@ class OpenDotaService
         case invalidData
     }
     
+    // Errors when manipulating data
+    enum DataError: Error {
+        case noData
+    }
+    // *****************************************
+    
     // Open Dota API data objects
     // *****************************************
+    
     struct Account: Codable
     {
         let profile: Profile
@@ -30,7 +39,7 @@ class OpenDotaService
     struct Player: Codable
     {
         let account_id: Int?
-        let hero_id: Int?
+        let hero_id: Int
         let item_0: Int?
         let item_1: Int?
         let item_2: Int?
@@ -61,8 +70,8 @@ class OpenDotaService
         let lose: Int? //Bool
         let total_gold: Int?
         let total_xp: Int?
-//        let kills_per_min: Float?
-//        let kda: Double?
+        //        let kills_per_min: Float?
+        //        let kda: Double?
     }
     
     struct SearchResult: Codable
@@ -87,6 +96,17 @@ class OpenDotaService
         let match_id: Int
         let radiant_team: [Int]
         let dire_team: [Int]
+    }
+    
+    struct Hero: Codable
+    {
+        let id: Int?
+        let name: String?
+        let localized_name: String?
+        let primary_attr: String?
+        let attack_types: String?
+        let roles: [String]?
+        let legs: Int?
     }
     // *****************************************
     
@@ -175,6 +195,19 @@ class OpenDotaService
             throw ApiError.invalidData
         }
     }
+    
+    func fetchDotaHeros() async throws -> [Hero]
+    {
+        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/heroes")
+        
+        // Translate JSON response from API call
+        do {
+            let decoder = JSONDecoder()
+            return try decoder.decode([Hero].self, from: data)
+        } catch {
+            throw ApiError.invalidData
+        }
+    }
     // *****************************************
     
     // Get match ID numbers from RecentMatch structs
@@ -207,6 +240,11 @@ class OpenDotaService
         var matches: [Match] = []
         var playerData: [Player] = []
         
+        // If no match data received throw error
+        if (matchIDs.isEmpty) {
+            throw DataError.noData
+        }
+        
         // get all match objects for the selected player
         for matchID in matchIDs {
             matches.append(try await fetchMatch(matchId: matchID))
@@ -223,25 +261,29 @@ class OpenDotaService
         return playerData
     }
     
-    // Get pro player match data from 20 random pro matches
-    func getProMatchData(matchIDs: [Int], accountID: Int) async throws -> [Player]
+    // Get pro player match data from 20 recent pro matches
+    func getProMatchData(matchIDs: [Int]) async throws -> [Player]
     {
         var matches: [Match] = []
         var proData: [Player] = []
         var count = 0
         
+        // If no match data received throw error
+        if (matchIDs.isEmpty) {
+            throw DataError.noData
+        }
+        
         // get first 20 pro match objects
         for matchID in matchIDs {
             if (count < 20) {
                 matches.append(try await fetchMatch(matchId: matchID))
-                print(count)
                 count+=1
             }
             else {
                 break
             }
-                
         }
+        
         // Get pro player data from the 20 matches
         for match in matches {
             for proPlayer in match.players {
@@ -252,17 +294,68 @@ class OpenDotaService
     }
     
     // Get average GPM from multiple matches worth of player data
-    func getAverageGPM(Data: [Player]) -> Int
+    func getAverageGPM(data: [Player]) throws -> Int
     {
         var GPM = 0
         
+        // If we didn't receive data let the app know
+        if (data.isEmpty) {
+            throw DataError.noData
+        }
+        
         // Pull GPM from players recent match data
-        for player in Data {
+        for player in data {
             GPM += player.gold_per_min ?? 0
         }
         // Find avg by dividing by number of matches
-        GPM = GPM/Data.count
+        GPM = GPM/data.count
         
         return GPM
     }
+    
+    // Determine the recently played heroes for the selected player
+    func getPlayerHeroes(data: [Player], heroes: [Hero]) throws -> Array<(key: String, value: Int)>
+    {
+        // <Hero ID, Number of matches played>
+        var heroesPlayed: Dictionary<Int, Int> = [:]
+        
+        // If we didn't receive data let the app know
+        if (data.isEmpty) {
+            throw DataError.noData
+        }
+        
+        for player in data {
+            // If the played hero hasnt been added to the dictionary yet add it
+            if !heroesPlayed.keys.contains(player.hero_id) {
+                heroesPlayed.updateValue(0, forKey: player.hero_id)
+            }
+            // Increment the count for that hero
+            heroesPlayed[player.hero_id]! += 1
+        }
+        
+        // Convert hero ids to string hero names in a new dictionary and sort from most played to least played
+        return heroesPlayedToString(data: heroesPlayed, allHeroes: heroes).sorted(by: {$0.value > $1.value})
+    }
+    
+    // Convert recently played hero IDs to string hero names
+    func heroesPlayedToString(data: Dictionary<Int, Int>, allHeroes: [Hero]) -> Dictionary<String, Int>
+    {
+        // Used to keep track of hero string being added to dict
+        var nextHeroIndex = 0
+        
+        // Dict to be returned with hero ids converted to strings
+        var heroesPlayedStrings: Dictionary<String, Int> = [:]
+        
+        // For every recently played hero convert the hero id to its string hero name and add it to a new dict that can be used in the UI
+        for entry in data {
+            nextHeroIndex = allHeroes.firstIndex { hero in
+                hero.id == entry.key
+            }!
+            heroesPlayedStrings.updateValue(entry.value, forKey: allHeroes[nextHeroIndex].localized_name ?? "Name not found")
+            
+        }
+        // Return loaded dict
+        return heroesPlayedStrings
+    }
+    
 }
