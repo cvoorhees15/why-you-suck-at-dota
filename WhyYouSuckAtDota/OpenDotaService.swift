@@ -9,22 +9,19 @@ import Foundation
 class OpenDotaService
 {
     // Error Enums
-    // *****************************************
+    // ***************************************************************************************************************************
+    
     // Open Dota API call potential errors
     enum ApiError: Error {
         case invalidURL
         case invalidReponse
         case invalidData
-    }
-    
-    // Errors when manipulating data
-    enum DataError: Error {
         case noData
     }
-    // *****************************************
-    
-    // Open Dota API data objects
-    // *****************************************
+    // ***************************************************************************************************************************
+
+    // Open Dota API data objects // TODO: Add API keys
+    // ***************************************************************************************************************************
     
     struct Account: Codable
     {
@@ -108,10 +105,10 @@ class OpenDotaService
         let roles: [String]?
         let legs: Int?
     }
-    // *****************************************
+    // ***************************************************************************************************************************
     
-    // API Calls
-    // *****************************************
+    // Open Dota API Calls
+    // ***************************************************************************************************************************
     func openDotaAPICall(endpoint: String) async throws -> Data
     {
         // Create url for API call
@@ -208,7 +205,11 @@ class OpenDotaService
             throw ApiError.invalidData
         }
     }
-    // *****************************************
+    // ***************************************************************************************************************************
+    
+    
+    // Data calculations for received match and player data
+    // ***************************************************************************************************************************
     
     // Get match ID numbers from RecentMatch structs
     func getRecentMatchIDs(recentMatches: [RecentMatch]) -> [Int]
@@ -242,7 +243,7 @@ class OpenDotaService
         
         // If no match data received throw error
         if (matchIDs.isEmpty) {
-            throw DataError.noData
+            throw ApiError.noData
         }
         
         // get all match objects for the selected player
@@ -270,7 +271,7 @@ class OpenDotaService
         
         // If no match data received throw error
         if (matchIDs.isEmpty) {
-            throw DataError.noData
+            throw ApiError.noData
         }
         
         // get first 20 pro match objects
@@ -298,9 +299,9 @@ class OpenDotaService
     {
         var GPM = 0
         
-        // If we didn't receive data let the app know
+        // If we didn't receive data get out
         if (data.isEmpty) {
-            throw DataError.noData
+            throw ApiError.noData
         }
         
         // Pull GPM from players recent match data
@@ -313,15 +314,15 @@ class OpenDotaService
         return GPM
     }
     
-    // Determine the recently played heroes for the selected player
-    func getPlayerHeroes(data: [Player], heroes: [Hero]) throws -> Array<(key: String, value: Int)>
+    // Determine the heros played by the provided players
+    func getHeroes(data: [Player], heroes: [Hero]) throws -> Array<(key: Int, value: Int)>
     {
         // <Hero ID, Number of matches played>
         var heroesPlayed: Dictionary<Int, Int> = [:]
         
-        // If we didn't receive data let the app know
+        // If we didn't receive data get out
         if (data.isEmpty) {
-            throw DataError.noData
+            throw ApiError.noData
         }
         
         for player in data {
@@ -333,12 +334,12 @@ class OpenDotaService
             heroesPlayed[player.hero_id]! += 1
         }
         
-        // Convert hero ids to string hero names in a new dictionary and sort from most played to least played
-        return heroesPlayedToString(data: heroesPlayed, allHeroes: heroes).sorted(by: {$0.value > $1.value})
+        // Convert hero ids to string hero names and sort from most played to least played
+        return heroesPlayed.sorted(by: {$0.value > $1.value})
     }
     
     // Convert recently played hero IDs to string hero names
-    func heroesPlayedToString(data: Dictionary<Int, Int>, allHeroes: [Hero]) -> Dictionary<String, Int>
+    func heroesToString(data: Dictionary<Int, Int>, allHeroes: [Hero]) -> Dictionary<String, Int>
     {
         // Used to keep track of hero string being added to dict
         var nextHeroIndex = 0
@@ -346,7 +347,7 @@ class OpenDotaService
         // Dict to be returned with hero ids converted to strings
         var heroesPlayedStrings: Dictionary<String, Int> = [:]
         
-        // For every recently played hero convert the hero id to its string hero name and add it to a new dict that can be used in the UI
+        // For every recently played hero convert the hero id to its string hero name and add it to a new dict that can be used by the UI
         for entry in data {
             nextHeroIndex = allHeroes.firstIndex { hero in
                 hero.id == entry.key
@@ -354,8 +355,36 @@ class OpenDotaService
             heroesPlayedStrings.updateValue(entry.value, forKey: allHeroes[nextHeroIndex].localized_name ?? "Name not found")
             
         }
-        // Return loaded dict
+        
         return heroesPlayedStrings
     }
+    
+    // Get comparable pro builds based on heroes the selected player plays
+    func getHeroBuilds(data: [Player], playerHeroes: Array<(key: Int, value: Int)>) throws -> [Player]
+    {
+        var topThree: Array<(key: Int, value: Int)> = []
+        var heroBuilds: [Player] = []
+        
+        // If we didn't receive data get out
+        if (data.isEmpty) {
+            throw ApiError.noData
+        }
+        
+        // Identify selected player's top three most played heroes
+        // This assumes that 'playerHeroes' comes sorted
+        for i in 0...2 {
+            topThree.append((key: playerHeroes[i].key, value: playerHeroes[i].value))
+        }
+        
+        // Collect pro player builds for selected players most played heroes
+        for pro in data {
+            if (topThree.contains(where: ({$0.key == pro.hero_id}))) {
+                heroBuilds.append(pro)
+            }
+        }
+        
+        return heroBuilds
+    }
+    // ***************************************************************************************************************************
     
 }

@@ -19,7 +19,9 @@ struct PlayerDataView: View {
     // Selected player and pro player data used for calculating why the selected player sucks
     @State var playerGPM = 0
     @State var proGPM = 0
-    @State var heroesPlayed: Array<(key: String, value: Int)> = []
+    @State var playerHeroesPlayed: Array<(key: Int, value: Int)> = []
+    @State var proHeroesPlayed: Array<(key: Int, value: Int)> = []
+    @State var heroBuilds: [OpenDotaService.Player] = []
     
     // Data from API calls
     @State var playerMatches: [OpenDotaService.RecentMatch] = []
@@ -30,15 +32,19 @@ struct PlayerDataView: View {
     
     var body: some View {
         VStack {
-            // List recently played heroes
-            List(heroesPlayed, id: \.key) {
-                hero in
-                if (hero.key != "Unknown") {
-                    HStack {
-                        Text("\(hero.key): \(hero.value)")
+            // List recently played heroes by selected player
+            List(heroBuilds, id: \.net_worth) {
+                build in
+                    VStack {
+                        Image("\(build.hero_id)")
+                            .aspectRatio(contentMode: .fit)
+                            .scaledToFit()
+                            .clipShape(Circle())
+                        Text("Kills: \(build.kills ?? 0)")
+                        Text("Deaths: \(build.deaths ?? 0)")
+                        Text("Assists: \(build.assists ?? 0)")
                     }
-                }
-            }.navigationTitle("Recent Heroes")
+            }.navigationTitle("")
             
             Text("Your average GPM: \(String(playerGPM))")
             Text("Immortal player average GPM: \(String(proGPM))")
@@ -52,7 +58,10 @@ struct PlayerDataView: View {
                 // Make calculations with player and pro data to create comparisons
                 try playerGPM = ODS.getAverageGPM(data: playerData)
                 try proGPM = ODS.getAverageGPM(data: proData)
-                try heroesPlayed = ODS.getPlayerHeroes(data: playerData, heroes: heroData)
+                try playerHeroesPlayed = ODS.getHeroes(data: playerData, heroes: heroData)
+                try proHeroesPlayed = ODS.getHeroes(data: proData, heroes: heroData)
+                try heroBuilds = ODS.getHeroBuilds(data: proData, playerHeroes: playerHeroesPlayed)
+                
             }
             catch OpenDotaService.ApiError.invalidURL {
                 print ("invalid URL")
@@ -63,7 +72,7 @@ struct PlayerDataView: View {
             catch OpenDotaService.ApiError.invalidData {
                 print ("invalid data")
             }
-            catch OpenDotaService.DataError.noData {
+            catch OpenDotaService.ApiError.noData {
                 print ("No match data for the selected player")
             }
             catch {
