@@ -8,6 +8,9 @@
 import Foundation
 class OpenDotaService
 {
+    // Constants
+    var OPEN_DOTA_URL = "https://api.opendota.com"
+    
     // Error Enums
     // ***************************************************************************************************************************
     
@@ -18,14 +21,17 @@ class OpenDotaService
         case invalidData
         case noData
     }
+    
     // ***************************************************************************************************************************
 
     // Open Dota API data objects // TODO: Add API keys
     // ***************************************************************************************************************************
     
+    
     struct Account: Codable
     {
         let profile: Profile
+        let rank_tier: Int?
     }
     
     struct Profile: Codable
@@ -98,29 +104,56 @@ class OpenDotaService
     struct Hero: Codable
     {
         let id: Int?
-        let name: String?
-        let localized_name: String?
+        let name: String
+        let localized_name: String
         let primary_attr: String?
         let attack_types: String?
         let roles: [String]?
         let legs: Int?
     }
+    
+    struct Item: Codable
+    {
+//      let abilities: [Ability] (could add later)
+//      let hint: [String]
+        let name: String
+        let id: Int
+        let img: String
+        let dname: String?
+        let qual: String?
+        let cost: Int?
+//      let behavior: String
+//      let dmgType: String?
+//      let notes: String?
+//      let attrib: [Attribute] (could add later)
+//      let mc: Bool?
+//      let hc: Bool?
+//      let cd: Int?
+//      let lore: String?
+//      let components: [String]?
+//      let created: Bool?
+//      let charges: Bool?
+    }
+    
     // ***************************************************************************************************************************
     
     // Open Dota API Calls
     // ***************************************************************************************************************************
+    
     func openDotaAPICall(endpoint: String) async throws -> Data
     {
         // Create url for API call
         guard let url = URL(string: endpoint) else {
+            print("Error in openDotaAPICall()")
             throw ApiError.invalidURL
         }
         
-        // make API call
+        // Make API call
         let (data, response) = try await URLSession.shared.data(from: url)
         
         // Translate HTTP response from API call
-        guard let response = response as? HTTPURLResponse, response.statusCode == 200 else {
+        if let response = response as? HTTPURLResponse, response.statusCode != 200 {
+            print("OpenDota API call response: \(response.statusCode)")
             throw ApiError.invalidReponse
         }
         
@@ -129,46 +162,49 @@ class OpenDotaService
     
     func fetchAccount(accountID: Int) async throws -> Account
     {
-        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/players/\(accountID)")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/players/\(accountID)")
         
         // Translate JSON response from API call
         do {
             let decoder = JSONDecoder()
             return try decoder.decode(Account.self, from: data)
         } catch {
+            print("Error in OpenDotaService::fetchAccount()")
             throw ApiError.invalidData
         }
     }
     
     func fetchSearchResults(personaname: String) async throws -> [SearchResult]
     {
-        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/search/?q=\(personaname)")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/search/?q=\(personaname)")
         
         // Translate JSON response from API call
         do {
             let decoder = JSONDecoder()
             return try decoder.decode([SearchResult].self, from: data)
         } catch {
+            print("Error in OpenDotaService::fetchSearchResults()")
             throw ApiError.invalidData
         }
     }
     
     func fetchMatch(matchId: Int) async throws -> Match
     {
-        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/matches/\(matchId)")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/matches/\(matchId)")
         
         // Translate JSON response from API call
         do {
             let decoder = JSONDecoder()
             return try decoder.decode(Match.self, from: data)
         } catch {
+            print("Error in OpenDotaService::fetchMatch()")
             throw ApiError.invalidData
         }
     }
     
     func fetchRecentMatches(accountId: Int) async throws -> [RecentMatch]
     {
-        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/players/\(accountId)/recentMatches")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/players/\(accountId)/recentMatches")
         
         // Translate JSON response from API call
         do {
@@ -182,27 +218,47 @@ class OpenDotaService
     
     func fetchProPubMatches() async throws -> [ProMatch]
     {
-        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/publicMatches/?min_rank=81")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/publicMatches/?min_rank=81")
         
         // Translate JSON response from API call
         do {
             let decoder = JSONDecoder()
             return try decoder.decode([ProMatch].self, from: data)
         } catch {
+            print("Error in OpenDotaService::fetchProPubMatches()")
             throw ApiError.invalidData
         }
     }
     
-    func fetchDotaHeros() async throws -> [Hero]
+    func fetchDotaHeroes() async throws -> [Hero]
     {
-        let data = try await openDotaAPICall(endpoint: "https://api.opendota.com/api/heroes")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/heroes")
         
         // Translate JSON response from API call
         do {
             let decoder = JSONDecoder()
             return try decoder.decode([Hero].self, from: data)
         } catch {
+            print("Error in OpenDotaService::fetchDotaHeroes()")
             throw ApiError.invalidData
+        }
+    }
+    
+    // There is not an OpenDota API call for all items so grab them from a local json file (WhyYouSuckAtDota/Static Data/items.json)
+    func fetchDotaItems() throws -> [Item]
+    {
+        if let url = Bundle.main.url(forResource: "items", withExtension: "json") {
+            do {
+                let data = try Data(contentsOf: url)
+                let decoder = JSONDecoder()
+                return try decoder.decode([Item].self, from: data)
+            } catch {
+                print("Error in OpenDotaService::fetchDotaItems()")
+                throw ApiError.invalidData
+            }
+        } else {
+            print("Error in OpenDotaService::fetchDotaItems()")
+            throw ApiError.invalidURL
         }
     }
     // ***************************************************************************************************************************
@@ -243,6 +299,7 @@ class OpenDotaService
         
         // If no match data received throw error
         if (matchIDs.isEmpty) {
+            print("Error in getPlayerMatchData()")
             throw ApiError.noData
         }
         
@@ -271,6 +328,7 @@ class OpenDotaService
         
         // If no match data received throw error
         if (matchIDs.isEmpty) {
+            print("Error in getProMatchData()")
             throw ApiError.noData
         }
         
@@ -301,6 +359,7 @@ class OpenDotaService
         
         // If we didn't receive data get out
         if (data.isEmpty) {
+            print("Error in getAverageGPM()")
             throw ApiError.noData
         }
         
@@ -315,6 +374,7 @@ class OpenDotaService
     }
     
     // Determine the heros played by the provided players
+    // Return dict [hero id : games played]
     func getHeroes(data: [Player], heroes: [Hero]) throws -> Array<(key: Int, value: Int)>
     {
         // <Hero ID, Number of matches played>
@@ -322,6 +382,7 @@ class OpenDotaService
         
         // If we didn't receive data get out
         if (data.isEmpty) {
+            print("Error in getHeroes()")
             throw ApiError.noData
         }
         
@@ -334,12 +395,12 @@ class OpenDotaService
             heroesPlayed[player.hero_id]! += 1
         }
         
-        // Convert hero ids to string hero names and sort from most played to least played
+        // Sort from most played to least played
         return heroesPlayed.sorted(by: {$0.value > $1.value})
     }
     
     // Convert recently played hero IDs to string hero names
-    func heroesToString(data: Dictionary<Int, Int>, allHeroes: [Hero]) -> Dictionary<String, Int>
+    func heroListToString(data: Dictionary<Int, Int>, allHeroes: [Hero]) -> Dictionary<String, Int>
     {
         // Used to keep track of hero string being added to dict
         var nextHeroIndex = 0
@@ -352,11 +413,43 @@ class OpenDotaService
             nextHeroIndex = allHeroes.firstIndex { hero in
                 hero.id == entry.key
             }!
-            heroesPlayedStrings.updateValue(entry.value, forKey: allHeroes[nextHeroIndex].localized_name ?? "Name not found")
+            heroesPlayedStrings.updateValue(entry.value, forKey: allHeroes[nextHeroIndex].localized_name)
             
         }
         
         return heroesPlayedStrings
+    }
+    
+    // Take a given hero ID and returns its string hero name
+    func heroIdToString(heroId: Int, allHeroes: [Hero]) -> String
+    {
+        for hero in allHeroes {
+            if (hero.id == heroId) {
+                return hero.name
+            }
+        }
+        
+        print("Issue in HeroIdToString()")
+        print("No hero found for the provided ID: \(heroId)")
+        return ""
+    }
+    
+    // Take a given item ID and returns its string item name
+    func itemIdToString(itemId: Int, allItems: [Item]) -> String
+    {
+        for item in allItems {
+            if (item.id == itemId) {
+                return item.name
+            }
+        }
+
+        // Don't bother logging an issue for empty item slot 
+        if (itemId != 0) {
+            print("Issue in ItemIdToString()")
+            print("No item found for the provided ID: \(itemId)")
+        }
+        
+        return ""
     }
     
     // Get comparable pro builds based on heroes the selected player plays
@@ -367,6 +460,7 @@ class OpenDotaService
         
         // If we didn't receive data get out
         if (data.isEmpty) {
+            print("Error in getHeroBuilds()")
             throw ApiError.noData
         }
         
@@ -384,6 +478,25 @@ class OpenDotaService
         }
         
         return heroBuilds
+    }
+    
+    // Produce the CDN URL for a given hero name (used to grab hero image for front end)
+    func getHeroImageLink(heroName: String) -> String
+    {
+        // Extract substring of the hero name from the string ex: npc_dota_hero_death_prophet -> death_prophet
+        if let range = heroName.range(of: "npc_dota_hero_") {
+            let formattedHeroName = heroName[range.upperBound...]
+            return ("https://cdn.dota2.com/apps/dota2/images/heroes/\(formattedHeroName.lowercased())_full.png")
+        }
+        
+        print("Invalid hero name provided to fetch image")
+        return ""
+    }
+    
+    // Produce the CDN URL for a given item name (used to grab item image for front end)
+    func getItemImageLink(itemName: String) -> String
+    {
+        return ("https://cdn.dota2.com/apps/dota2/images/items/\(itemName.lowercased())_lg.png")
     }
     // ***************************************************************************************************************************
     

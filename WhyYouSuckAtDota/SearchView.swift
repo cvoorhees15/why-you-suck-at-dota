@@ -20,6 +20,8 @@ struct SearchView: View {
     @State var proData: [OpenDotaService.Player] = []
     @State var proMatches: [OpenDotaService.ProMatch] = []
     @State var heroData: [OpenDotaService.Hero] = []
+    @State var itemData: [OpenDotaService.Item] = []
+
     
     
     var body: some View {
@@ -38,7 +40,11 @@ struct SearchView: View {
                     }
                     .frame(width: 44, height: 44)
                     
-                    NavigationLink(searchResult.personaname, destination: PlayerDataView(account_ID: searchResult.account_id, personaname: searchResult.personaname, proData: proData, heroData: heroData))
+                    // Pass data to PlayerDataView
+                    // ---------------------------
+                    // SELECTED PLAYER DATA: acc id, name, pro pic
+                    // CONSTANT DATA: heroes, pro player matches, items
+                    NavigationLink(searchResult.personaname, destination: PlayerDataView(account_ID: searchResult.account_id, personaname: searchResult.personaname, profilePic: searchResult.avatarfull, proData: proData, heroData: heroData, itemData: itemData))
                         .font(.title3)
                         .fontWeight(.bold)
                 }
@@ -67,14 +73,14 @@ struct SearchView: View {
                 }
             }
         }
-        // API call for pro player match data and dota hero/item data
+        // API calls for pro player match data and dota hero/item data (on start of the app)
         .task {
             do {
-                // TODO: Get pro player data and dota hero data once at the beginning of the session (not every time this view loads)
+                // TODO: Get this data ONCE at the beginning of the session (these are all getting called THREE times on startup)
+                itemData = try ODS.fetchDotaItems()
                 proMatches = try await ODS.fetchProPubMatches()
                 proData = try await ODS.getProMatchData(matchIDs: ODS.getProMatchIDs(proMatches: proMatches))
-                heroData = try await ODS.fetchDotaHeros()
-                // TODO: Fetch item data
+                heroData = try await ODS.fetchDotaHeroes()
             }
             catch OpenDotaService.ApiError.invalidURL {
                 print ("invalid URL")

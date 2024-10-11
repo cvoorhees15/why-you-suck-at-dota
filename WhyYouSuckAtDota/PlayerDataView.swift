@@ -14,9 +14,11 @@ struct PlayerDataView: View {
     // Params from SearchView
     @State var account_ID: Int
     @State var personaname: String
+    @State var profilePic: String
     @State var proData: [OpenDotaService.Player] = []
     
     // Selected player and pro player data used for calculating why the selected player sucks
+    @State var playerAccountInfo: OpenDotaService.Account?
     @State var playerGPM = 0
     @State var proGPM = 0
     @State var playerHeroesPlayed: Array<(key: Int, value: Int)> = []
@@ -28,21 +30,98 @@ struct PlayerDataView: View {
     @State var proMatches: [OpenDotaService.ProMatch] = []
     @State var playerData: [OpenDotaService.Player] = []
     @State var heroData: [OpenDotaService.Hero] = []
+    @State var itemData: [OpenDotaService.Item] = []
     
     
     var body: some View {
         VStack {
+            // Selected player Steam profile pic (avatar)
+            AsyncImage(url:URL(string: profilePic)) { avatar in avatar
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+                .clipShape(Circle())
+            } placeholder: {
+                Circle()
+                    .foregroundColor(.secondary)
+            }
+            // Selected player Steam account name
+            Text(personaname)
+            // Selected player Dota rank
+            Text(String(playerAccountInfo?.rank_tier ?? 0))
+            
             // List recently played heroes by selected player
             List(heroBuilds, id: \.net_worth) {
                 build in
                     VStack {
-                        Image("\(build.hero_id)")
-                            .aspectRatio(contentMode: .fit)
-                            .scaledToFit()
+                        AsyncImage(url:URL(string: ODS.getHeroImageLink(heroName: ODS.heroIdToString(heroId: build.hero_id, allHeroes: heroData)))) { heroImage in heroImage
+                            .resizable()
+                            .aspectRatio(contentMode: .fill)
                             .clipShape(Circle())
+                        } placeholder: {
+                            Circle()
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: 44, height: 44)
                         Text("Kills: \(build.kills ?? 0)")
                         Text("Deaths: \(build.deaths ?? 0)")
                         Text("Assists: \(build.assists ?? 0)")
+                        
+                        HStack {
+                            // Item 1 image
+                            AsyncImage(url:URL(string: ODS.getItemImageLink(itemName: ODS.itemIdToString(itemId: build.item_0 ?? 0, allItems: itemData)))) { heroImage in heroImage
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.secondary)
+                            }
+                            // Item 2 image
+                            AsyncImage(url:URL(string: ODS.getItemImageLink(itemName: ODS.itemIdToString(itemId: build.item_1 ?? 0, allItems: itemData)))) { heroImage in heroImage
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.secondary)
+                            }
+                            // Item 3 image
+                            AsyncImage(url:URL(string: ODS.getItemImageLink(itemName: ODS.itemIdToString(itemId: build.item_2 ?? 0, allItems: itemData)))) { heroImage in heroImage
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.secondary)
+                            }
+                            // Item 4 image
+                            AsyncImage(url:URL(string: ODS.getItemImageLink(itemName: ODS.itemIdToString(itemId: build.item_3 ?? 0, allItems: itemData)))) { heroImage in heroImage
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.secondary)
+                            }
+                            // Item 5 image
+                            AsyncImage(url:URL(string: ODS.getItemImageLink(itemName: ODS.itemIdToString(itemId: build.item_4 ?? 0, allItems: itemData)))) { heroImage in heroImage
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.secondary)
+                            }
+                            // Item 6 image
+                            AsyncImage(url:URL(string: ODS.getItemImageLink(itemName: ODS.itemIdToString(itemId: build.item_5 ?? 0, allItems: itemData)))) { heroImage in heroImage
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                            } placeholder: {
+                                Circle()
+                                    .foregroundColor(.secondary)
+                            }
+                        }
                     }
             }.navigationTitle("")
             
@@ -51,7 +130,8 @@ struct PlayerDataView: View {
         }
         .task {
             do {
-                // Get all recent match data for the selected player
+                // Fetch selected player information
+                playerAccountInfo = try await ODS.fetchAccount(accountID: account_ID)
                 playerMatches = try await ODS.fetchRecentMatches(accountId: account_ID)
                 playerData = try await ODS.getPlayerMatchData(matchIDs: ODS.getRecentMatchIDs(recentMatches: playerMatches), accountID: account_ID)
                 
@@ -61,7 +141,6 @@ struct PlayerDataView: View {
                 try playerHeroesPlayed = ODS.getHeroes(data: playerData, heroes: heroData)
                 try proHeroesPlayed = ODS.getHeroes(data: proData, heroes: heroData)
                 try heroBuilds = ODS.getHeroBuilds(data: proData, playerHeroes: playerHeroesPlayed)
-                
             }
             catch OpenDotaService.ApiError.invalidURL {
                 print ("invalid URL")
@@ -83,5 +162,5 @@ struct PlayerDataView: View {
 }
 
 #Preview {
-    PlayerDataView(account_ID: 0, personaname: "Tilted Warlord", proData: [])
+    PlayerDataView(account_ID: 0, personaname: "Tilted Warlord", profilePic: "", proData: [])
 }
