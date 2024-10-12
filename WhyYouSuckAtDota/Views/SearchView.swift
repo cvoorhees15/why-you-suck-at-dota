@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  SearchView.swift
 //  WhyYouSuckAtDota
 //
 //  Created by Caleb Voorhees on 9/8/24.
@@ -9,18 +9,19 @@ import SwiftUI
 
 struct SearchView: View {
     
-    let ODS = OpenDotaService()
+    var ODS = OpenDotaService()
+    var ODM = OpenDotaManager()
     
     // Stores user search bar input
     @State private var searchTerm = ""
     
     // Data from API calls
-    @State private var profile: OpenDotaService.Profile?
-    @State private var searchResults: [OpenDotaService.SearchResult] = []
-    @State var proData: [OpenDotaService.Player] = []
-    @State var proMatches: [OpenDotaService.ProMatch] = []
-    @State var heroData: [OpenDotaService.Hero] = []
-    @State var itemData: [OpenDotaService.Item] = []
+    @State private var profile: Profile?
+    @State private var searchResults: [SearchResult] = []
+    @State var proData: [Player] = []
+    @State var proMatches: [ProMatch] = []
+    @State var heroData: [Hero] = []
+    @State var itemData: [Item] = []
 
     
     
@@ -58,13 +59,13 @@ struct SearchView: View {
                         // Get list of steam accounts by persona name search term
                         searchResults = try await ODS.fetchSearchResults(personaname: searchTerm)
                     }
-                    catch OpenDotaService.ApiError.invalidURL {
+                    catch ApiError.invalidURL {
                         print ("invalid URL")
                     }
-                    catch OpenDotaService.ApiError.invalidReponse {
+                    catch ApiError.invalidReponse {
                         print ("invalid response")
                     }
-                    catch OpenDotaService.ApiError.invalidData {
+                    catch ApiError.invalidData {
                         print ("invalid data")
                     }
                     catch {
@@ -79,16 +80,18 @@ struct SearchView: View {
                 // TODO: Get this data ONCE at the beginning of the session (these are all getting called THREE times on startup)
                 itemData = try ODS.fetchDotaItems()
                 proMatches = try await ODS.fetchProPubMatches()
-                proData = try await ODS.getProMatchData(matchIDs: ODS.getProMatchIDs(proMatches: proMatches))
                 heroData = try await ODS.fetchDotaHeroes()
+                
+                // Pull a subset of data
+                proData = try await ODS.pullProDataFromMatches(matchIDs: ODM.getProMatchIDs(proMatches: proMatches))
             }
-            catch OpenDotaService.ApiError.invalidURL {
+            catch ApiError.invalidURL {
                 print ("invalid URL")
             }
-            catch OpenDotaService.ApiError.invalidReponse {
+            catch ApiError.invalidReponse {
                 print ("invalid response")
             }
-            catch OpenDotaService.ApiError.invalidData {
+            catch ApiError.invalidData {
                 print ("invalid data")
             }
             catch {
