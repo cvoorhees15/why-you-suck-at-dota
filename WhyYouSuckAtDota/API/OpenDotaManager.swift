@@ -57,6 +57,69 @@ class OpenDotaManager {
         return GPM
     }
     
+    // Get average XPM from multiple matches worth of player data
+    func getAverageXPM(data: [Player]) throws -> Int
+    {
+        var XPM = 0
+        
+        // If we didn't receive data get out
+        if (data.isEmpty) {
+            print("Error in getAverageXPM()")
+            throw ApiError.noData
+        }
+        
+        // Pull XPM from players recent match data
+        for player in data {
+            XPM += player.xp_per_min ?? 0
+        }
+        // Find avg by dividing by number of matches
+        XPM = XPM/data.count
+        
+        return XPM
+    }
+    
+    // Get average net worth from multiple matches worth of player data
+    func getAverageNetWorth(data: [Player]) throws -> Int
+    {
+        var NW = 0
+        
+        // If we didn't receive data get out
+        if (data.isEmpty) {
+            print("Error in getAverageNetWorth()")
+            throw ApiError.noData
+        }
+        
+        // Pull XPM from players recent match data
+        for player in data {
+            NW += player.net_worth ?? 0
+        }
+        // Find avg by dividing by number of matches
+        NW = NW/data.count
+        
+        return NW
+    }
+    
+    // Get average last hit count from multiple matches worth of player data
+    func getAverageLastHits(data: [Player]) throws -> Int
+    {
+        var LH = 0
+        
+        // If we didn't receive data get out
+        if (data.isEmpty) {
+            print("Error in getAverageLastHits()")
+            throw ApiError.noData
+        }
+        
+        // Pull XPM from players recent match data
+        for player in data {
+            LH += player.last_hits ?? 0
+        }
+        // Find avg by dividing by number of matches
+        LH = LH/data.count
+        
+        return LH
+    }
+    
     // Determine the heros played by the provided players
     // Return dict [hero id : games played]
     func getHeroes(data: [Player], heroes: [Hero]) throws -> Array<(key: Int, value: Int)>
@@ -97,6 +160,7 @@ class OpenDotaManager {
         
         // Identify selected player's top three most played heroes
         // This assumes that 'playerHeroes' comes sorted
+        // FIXME: This also assumes the player has at least 3 different heroes played in their latest 20 matches
         for i in 0...2 {
             topThree.append((key: playerHeroes[i].key, value: playerHeroes[i].value))
         }
@@ -132,6 +196,32 @@ class OpenDotaManager {
     func getItemImageLink(itemName: String) -> String
     {
         return ("\(DOTA_CDN_URL)/items/\(itemName.lowercased())_lg.png")
+    }
+    
+    // Produce icon name for a given rank (used to grab rank icon image from project assets)
+    func getRankImage(rankTier: Int) -> String
+    {
+        if (rankTier != 0) {
+            let rankTierString = String(rankTier)
+            return ("rank_icon_\(rankTierString.first!)")
+        }
+        else {
+            print("Invalid rank tier provided to fetch icon")
+            return ""
+        }
+    }
+    
+    // Produce image name for a given rank
+    func getRankStarImage(rankTier: Int) -> String
+    {
+        if (rankTier != 0) {
+            let rankTierString = String(rankTier)
+            return ("rank_star_\(rankTierString.last!)")
+        }
+        else {
+            print("Invalid rank tier provided to fetch stars")
+            return ""
+        }
     }
     
     // ***************************************************
