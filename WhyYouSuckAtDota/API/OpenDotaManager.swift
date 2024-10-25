@@ -179,6 +179,19 @@ class OpenDotaManager {
     // Getter functions to get Dota related images from a content delivery network
     // ***************************************************************************
     
+    // Produce the CDN URL for a given hero name (used to grab hero icon for front end)
+    func getHeroIconLink(heroName: String) -> String
+    {
+        // Extract substring of the hero name from the string ex: npc_dota_hero_death_prophet -> death_prophet
+        if let range = heroName.range(of: "npc_dota_hero_") {
+            let formattedHeroName = heroName[range.upperBound...]
+            return ("\(DOTA_CDN_URL)/heroes/\(formattedHeroName.lowercased())_icon.png")
+        }
+        
+        print("Invalid hero name provided to fetch image")
+        return ""
+    }
+    
     // Produce the CDN URL for a given hero name (used to grab hero image for front end)
     func getHeroImageLink(heroName: String) -> String
     {
@@ -188,7 +201,7 @@ class OpenDotaManager {
             return ("\(DOTA_CDN_URL)/heroes/\(formattedHeroName.lowercased())_full.png")
         }
         
-        print("Invalid hero name provided to fetch image")
+        print("Invalid hero name provided to fetch hero icon")
         return ""
     }
     
@@ -198,7 +211,7 @@ class OpenDotaManager {
         return ("\(DOTA_CDN_URL)/items/\(itemName.lowercased())_lg.png")
     }
     
-    // Produce icon name for a given rank (used to grab rank icon image from project assets)
+    // Produce icon name for a given rank (used to grab rank icon from project assets)
     func getRankImage(rankTier: Int) -> String
     {
         if (rankTier != 0) {
@@ -206,7 +219,7 @@ class OpenDotaManager {
             return ("rank_icon_\(rankTierString.first!)")
         }
         else {
-            print("Invalid rank tier provided to fetch icon")
+            print("Invalid rank tier provided to fetch rank icon")
             return ""
         }
     }
