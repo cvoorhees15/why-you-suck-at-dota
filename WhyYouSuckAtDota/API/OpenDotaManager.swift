@@ -175,9 +175,9 @@ class OpenDotaManager {
         return heroBuilds
     }
     
-    // ***************************************************************************
-    // Getter functions to get Dota related images from a content delivery network
-    // ***************************************************************************
+    // *************************************************************************************************
+    // Getter functions to get Dota related images from a content delivery network or from local storage
+    // *************************************************************************************************
     
     // Produce the CDN URL for a given hero name (used to grab hero icon for front end)
     func getHeroIconLink(heroName: String) -> String

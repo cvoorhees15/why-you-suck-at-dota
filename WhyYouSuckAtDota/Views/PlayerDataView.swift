@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 struct PlayerDataView: View {
     
@@ -75,89 +76,54 @@ struct PlayerDataView: View {
 //                        .frame(width: 70, height: 70)
 //                        .clipShape(Circle())
                 }
-                VStack {
-                    // Selected Player Average Stats
-                    Text("Player Averages")
-                        .font(.title2)
-                        .bold()
-                        .frame(alignment: .center)
-                    HStack {
-                        VStack {
-                            Text("GPM")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(playerGPM))
+                HStack {
+                    GroupBox("Gold / Minute") {
+                        Chart {
+                            BarMark(x: .value("Player GPM", "You"),
+                                    y: .value("GPM", playerGPM))
+                            .foregroundStyle(.green)
+                            BarMark(x: .value("Pro GPM", "Immortals"),
+                                    y: .value("GPM", proGPM))
+                            .foregroundStyle(.red)
                         }
-                        .padding()
-                        VStack {
-                            Text("XPM")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(playerXPM))
+                    }
+                    GroupBox("XP / Minute") {
+                        Chart {
+                            BarMark(x: .value("Player XPM", "You"),
+                                    y: .value("XPM", playerXPM))
+                            .foregroundStyle(.green)
+                            BarMark(x: .value("Pro XPM", "Immortals"),
+                                    y: .value("XPM", proXPM))
+                            .foregroundStyle(.red)
                         }
-                        .padding()
-                        VStack {
-                            Text("Net")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(playerNW))
-                        }
-                        .padding()
-                        VStack {
-                            Text("CS")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(playerLH))
-                        }
-                        .padding()
                     }
                 }
-                    
-                    // Pro Player Average Stats
-                    Text("Immortal Averages")
+                HStack {
+                    GroupBox("Net Worth") {
+                        Chart {
+                            BarMark(x: .value("Player NW", "You"),
+                                    y: .value("Net Worth", playerNW))
+                            .foregroundStyle(.green)
+                            BarMark(x: .value("Pro Player NW", "Immortals"),
+                                    y: .value("Net Worth", proNW))
+                            .foregroundStyle(.red)
+                        }
+                    }
+                    GroupBox("Last Hits") {
+                        Chart {
+                            BarMark(x: .value("Player LH", "You"),
+                                    y: .value("Last Hits", playerLH))
+                            .foregroundStyle(.green)
+                            BarMark(x: .value("Pro Player LH", "Immortals"),
+                                    y: .value("Last Hits", proLH))
+                            .foregroundStyle(.red)
+                        }
+                    }
+                }
+                    Text("Immortal Builds for Your Heroes")
                         .font(.title2)
                         .bold()
-                        .frame(alignment: .center)
-                    HStack {
-                        VStack {
-                            Text("GPM")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(proGPM))
-                        }
-                        .padding()
-                        VStack {
-                            Text("XPM")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(proXPM))
-                        }
-                        .padding()
-                        VStack {
-                            Text("Net")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(proNW))
-                        }
-                        .padding()
-                        VStack {
-                            Text("CS")
-                                .font(.title3)
-                                .bold()
-                                .frame(alignment: .center)
-                            Text(String(proLH))
-                        }
-                        .padding()
-                    }
-                    Text("Immortal Builds for Your Heroes")
-                        .font(.title3)
+                        .padding(.top)
                     // List recently played heroes by selected player
                     // TODO: net_worth isn't a true unique ID
                     ForEach(heroBuilds, id: \.net_worth) {
@@ -202,7 +168,6 @@ struct PlayerDataView: View {
                                         .foregroundColor(.secondary)
                                 }
                                 .frame(width: 44, height: 44)
-                                .cornerRadius(15)
                                 
                                 // Item 2 image
                                 AsyncImage(url: URL(string: ODM.getItemImageLink(itemName: ODM.itemIdToString(itemId: build.item_1 ?? 0, allItems: itemData)))) { itemImage in
@@ -215,7 +180,6 @@ struct PlayerDataView: View {
                                         .foregroundColor(.secondary)
                                 }
                                 .frame(width: 44, height: 44)
-                                .cornerRadius(15)
                                 
                                 // Item 3 image
                                 AsyncImage(url: URL(string: ODM.getItemImageLink(itemName: ODM.itemIdToString(itemId: build.item_2 ?? 0, allItems: itemData)))) { itemImage in
@@ -228,7 +192,6 @@ struct PlayerDataView: View {
                                         .foregroundColor(.secondary)
                                 }
                                 .frame(width: 44, height: 44)
-                                .cornerRadius(15)
                                 
                                 // Item 4 image
                                 AsyncImage(url: URL(string: ODM.getItemImageLink(itemName: ODM.itemIdToString(itemId: build.item_3 ?? 0, allItems: itemData)))) { itemImage in
@@ -241,7 +204,6 @@ struct PlayerDataView: View {
                                         .foregroundColor(.secondary)
                                 }
                                 .frame(width: 44, height: 44)
-                                .cornerRadius(15)
                                 
                                 // Item 5 image
                                 AsyncImage(url: URL(string: ODM.getItemImageLink(itemName: ODM.itemIdToString(itemId: build.item_4 ?? 0, allItems: itemData)))) { itemImage in
@@ -254,7 +216,6 @@ struct PlayerDataView: View {
                                         .foregroundColor(.secondary)
                                 }
                                 .frame(width: 44, height: 44)
-                                .cornerRadius(15)
                                 
                                 // Item 6 image
                                 AsyncImage(url: URL(string: ODM.getItemImageLink(itemName: ODM.itemIdToString(itemId: build.item_5 ?? 0, allItems: itemData)))) { itemImage in
@@ -267,17 +228,42 @@ struct PlayerDataView: View {
                                         .foregroundColor(.secondary)
                                 }
                                 .frame(width: 44, height: 44)
-                                .cornerRadius(15)
                             }
                         }
                         .padding()
                         .background(Color(.systemBackground))
                         .cornerRadius(10)
                         .shadow(radius: 5)
-                        
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
+                Text("Why \(personaname) Sucks at Dota:")
+                        .font(.title2)
+                        .bold()
+                        .frame(alignment: .leading)
+                if (playerXPM < proXPM) {
+                    Text("Get more involved during matches! XPM is low compared to immortal players who play your heroes...")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                if (playerNW < proNW) {
+                    Text("Stop feeding! Overall net worth is low when compared to immortal players who play your heroes...")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                if (playerLH < proLH) {
+                    Text("Hit more creeps! Last hit count is low when compared to immortal players who play your heroes...")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                if (playerGPM < proGPM) {
+                    Text("Kill more heroes and creeps! GPM is low when compared to immortal players who play your heroes...")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                if (playerGPM < proGPM && playerLH < proLH && playerNW < proNW && playerXPM < proXPM) {
+                    Text("Wait \(personaname) might not suck at Dota... all their basic metrics are higher than immortal players who play their heroes. Keep it up!")
+                }
             }
             .opacity(isViewLoading ? 0 : 1)
             
@@ -302,10 +288,10 @@ struct PlayerDataView: View {
                 playerAccountInfo = try await ODS.fetchAccount(accountID: account_ID)
                 playerMatches = try await ODS.fetchRecentMatches(accountId: account_ID)
                 
-                // Pull a subset of player data
+                // Pull a subset of selected player's matches
                 playerData = try await ODS.pullPlayerDataFromMatches(matchIDs: ODM.getRecentMatchIDs(recentMatches: playerMatches), accountID: account_ID)
                 
-                // Make calculations with player and pro data to create comparisons
+                // Get various metrics for selected player and pro players who play the same heroes
                 
                 // Selected Player
                 try playerGPM = ODM.getAverageGPM(data: playerData)

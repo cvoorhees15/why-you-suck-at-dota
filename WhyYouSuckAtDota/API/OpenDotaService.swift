@@ -175,7 +175,7 @@ class OpenDotaService {
             print("Error in pullProDataFromMatches()")
             throw ApiError.noData
         }
-        
+        // TODO: Loop once, do both tasks
         // get first 20 pro match objects
         for matchID in matchIDs {
             if (count < 20) {
