@@ -39,6 +39,9 @@ class OpenDotaManager {
     // Get average GPM from multiple matches worth of player data
     func getAverageGPM(data: [Player]) throws -> Int
     {
+        var current = 0
+        var total = 0
+        var count = 0
         var GPM = 0
         
         // If we didn't receive data get out
@@ -49,10 +52,18 @@ class OpenDotaManager {
         
         // Pull GPM from players recent match data
         for player in data {
-            GPM += player.gold_per_min ?? 0
+            current = player.gold_per_min ?? 0
+            
+            // Only include valid data in the average
+            if (current > 0) {
+                total += current
+                count += 1
+            }
+            
         }
+        
         // Find avg by dividing by number of matches
-        GPM = GPM/data.count
+        GPM = total/count
         
         return GPM
     }
@@ -60,6 +71,9 @@ class OpenDotaManager {
     // Get average XPM from multiple matches worth of player data
     func getAverageXPM(data: [Player]) throws -> Int
     {
+        var current = 0
+        var total = 0
+        var count = 0
         var XPM = 0
         
         // If we didn't receive data get out
@@ -68,12 +82,20 @@ class OpenDotaManager {
             throw ApiError.noData
         }
         
-        // Pull XPM from players recent match data
+        // Pull GPM from players recent match data
         for player in data {
-            XPM += player.xp_per_min ?? 0
+            current = player.xp_per_min ?? 0
+            
+            // Only include valid data in the average
+            if (current > 0) {
+                total += current
+                count += 1
+            }
+            
         }
+        
         // Find avg by dividing by number of matches
-        XPM = XPM/data.count
+        XPM = total/count
         
         return XPM
     }
@@ -81,6 +103,9 @@ class OpenDotaManager {
     // Get average net worth from multiple matches worth of player data
     func getAverageNetWorth(data: [Player]) throws -> Int
     {
+        var current = 0
+        var total = 0
+        var count = 0
         var NW = 0
         
         // If we didn't receive data get out
@@ -89,12 +114,20 @@ class OpenDotaManager {
             throw ApiError.noData
         }
         
-        // Pull XPM from players recent match data
+        // Pull GPM from players recent match data
         for player in data {
-            NW += player.net_worth ?? 0
+            current = player.net_worth ?? 0
+            
+            // Only include valid data in the average
+            if (current > 0) {
+                total += current
+                count += 1
+            }
+            
         }
+        
         // Find avg by dividing by number of matches
-        NW = NW/data.count
+        NW = total/count
         
         return NW
     }
@@ -102,6 +135,9 @@ class OpenDotaManager {
     // Get average last hit count from multiple matches worth of player data
     func getAverageLastHits(data: [Player]) throws -> Int
     {
+        var current = 0
+        var total = 0
+        var count = 0
         var LH = 0
         
         // If we didn't receive data get out
@@ -110,12 +146,20 @@ class OpenDotaManager {
             throw ApiError.noData
         }
         
-        // Pull XPM from players recent match data
+        // Pull GPM from players recent match data
         for player in data {
-            LH += player.last_hits ?? 0
+            current = player.last_hits ?? 0
+            
+            // Only include valid data in the average
+            if (current > 0) {
+                total += current
+                count += 1
+            }
+            
         }
+        
         // Find avg by dividing by number of matches
-        LH = LH/data.count
+        LH = total/count
         
         return LH
     }
@@ -158,11 +202,15 @@ class OpenDotaManager {
             throw ApiError.noData
         }
         
-        // Identify selected player's top three most played heroes
-        // This assumes that 'playerHeroes' comes sorted
-        // FIXME: This also assumes the player has at least 3 different heroes played in their latest 20 matches
+        // Grab the selected player's top three most played heroes
+        // This assumes that 'playerHeroes' comes sorted (from most played to least played)
         for i in 0...2 {
             topThree.append((key: playerHeroes[i].key, value: playerHeroes[i].value))
+            
+            // break early if there are no more heroes in the list
+            if (playerHeroes.count == i+1) {
+                break
+            }
         }
         
         // Collect pro player builds for selected players most played heroes

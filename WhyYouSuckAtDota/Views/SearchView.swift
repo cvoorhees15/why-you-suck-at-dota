@@ -32,16 +32,16 @@ struct SearchView: View {
                 searchResult in
                 HStack(spacing: 20) {
                     AsyncImage(url:URL(string: searchResult.avatarfull)) { avatar in avatar
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .clipShape(Circle())
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .clipShape(Circle())
                     } placeholder: {
                         Circle()
                             .foregroundColor(.secondary)
                     }
                     .frame(width: 44, height: 44)
                     
-                    // Pass data to PlayerDataView
+                    // Pass data to PlayerDataView:
                     // ---------------------------
                     // SELECTED PLAYER DATA: acc id, name, pro pic
                     // CONSTANT DATA: heroes, pro player matches, items

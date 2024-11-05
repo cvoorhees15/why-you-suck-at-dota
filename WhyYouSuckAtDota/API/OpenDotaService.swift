@@ -180,19 +180,14 @@ class OpenDotaService {
         for matchID in matchIDs {
             if (count < 20) {
                 matches.append(try await fetchMatch(matchId: matchID))
+                proData.append(contentsOf: matches[count].players)
                 count+=1
             }
             else {
                 break
             }
         }
-        
-        // Get pro player data from the 20 matches
-        for match in matches {
-            for proPlayer in match.players {
-                proData.append(proPlayer)
-            }
-        }
+
         return proData
     }
 }

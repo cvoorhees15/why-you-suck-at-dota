@@ -240,7 +240,7 @@ struct PlayerDataView: View {
                 Text("Why \(personaname) Sucks at Dota:")
                         .font(.title2)
                         .bold()
-                        .frame(alignment: .leading)
+                        .multilineTextAlignment(.center)
                 if (playerXPM < proXPM) {
                     Text("Get more involved during matches! XPM is low compared to immortal players who play your heroes...")
                         .multilineTextAlignment(.center)
@@ -261,8 +261,10 @@ struct PlayerDataView: View {
                         .multilineTextAlignment(.center)
                         .padding()
                 }
-                if (playerGPM < proGPM && playerLH < proLH && playerNW < proNW && playerXPM < proXPM) {
-                    Text("Wait \(personaname) might not suck at Dota... all their basic metrics are higher than immortal players who play their heroes. Keep it up!")
+                if (playerGPM > proGPM && playerLH > proLH && playerNW > proNW && playerXPM > proXPM) {
+                    Text("\(personaname) might not suck at Dota... all their basic metrics are higher than immortal players who play their heroes. Keep it up!")
+                        .multilineTextAlignment(.center)
+                        .padding()
                 }
             }
             .opacity(isViewLoading ? 0 : 1)
