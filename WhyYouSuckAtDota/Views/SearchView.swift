@@ -27,53 +27,84 @@ struct SearchView: View {
     
     var body: some View {
         NavigationStack {
-            // List of persona name search results
-            List(searchResults, id: \.account_id) {
-                searchResult in
-                HStack(spacing: 20) {
-                    AsyncImage(url:URL(string: searchResult.avatarfull)) { avatar in avatar
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .clipShape(Circle())
-                    } placeholder: {
-                        Circle()
-                            .foregroundColor(.secondary)
-                    }
-                    .frame(width: 44, height: 44)
-                    
-                    // Pass data to PlayerDataView:
-                    // ---------------------------
-                    // SELECTED PLAYER DATA: acc id, name, pro pic
-                    // CONSTANT DATA: heroes, pro player matches, items
-                    NavigationLink(searchResult.personaname, destination: PlayerDataView(account_ID: searchResult.account_id, personaname: searchResult.personaname, profilePic: searchResult.avatarfull, proData: proData, heroData: heroData, itemData: itemData))
+            ZStack {
+                // Gradient background
+                LinearGradient(
+                    gradient: Gradient(colors: [Color.main, Color.appRed]),
+                    startPoint: .leading,
+                    endPoint: .bottomTrailing
+                )
+                .ignoresSafeArea() // Ensure gradient fills the entire screen
+                
+                // List of persona name search results
+                List(searchResults, id: \.account_id) { searchResult in
+                    HStack(spacing: 20) {
+                        AsyncImage(url: URL(string: searchResult.avatarfull)) { avatar in
+                            avatar
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .clipShape(Circle())
+                        } placeholder: {
+                            Circle()
+                                .foregroundColor(.secondary)
+                        }
+                        .frame(width: 44, height: 44)
+                        
+                        // NavigationLink for player details
+                        NavigationLink(
+                            searchResult.personaname,
+                            destination: PlayerDataView(
+                                account_ID: searchResult.account_id,
+                                personaname: searchResult.personaname,
+                                profilePic: searchResult.avatarfull,
+                                proData: proData,
+                                heroData: heroData,
+                                itemData: itemData
+                            )
+                        )
                         .font(.title3)
                         .fontWeight(.bold)
+                    }
+                    .foregroundColor(.white)
+                    .padding(.vertical, 8)
+                    .background(Color(.main))
+                    .cornerRadius(10)
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 10)
+                            .stroke(Color(.systemGray3), lineWidth: 1)
+                    )
+                    .listRowBackground(Color.clear) // Clear background for list rows
+                    .listRowSeparator(.hidden) // Hide row separators
+                }
+                .listStyle(.plain)
+                .scrollContentBackground(.hidden) // Removes the default List background
+            }
+            .toolbar {
+                ToolbarItem(placement: .navigationBarLeading) {
+                    Text("Player Search")
+                        .font(.title)
+                        .fontWeight(.bold)
+                        .foregroundColor(Color(.systemGray))
                 }
             }
-            .navigationTitle("Steam Accounts")
             .searchable(text: $searchTerm, prompt: "Enter Account Name")
-            // API call for list of steam accounts based on search criteria (on submission of search)
             .onSubmit(of: .search) {
                 Task {
                     do {
-                        // Get list of steam accounts by persona name search term
                         searchResults = try await ODS.fetchSearchResults(personaname: searchTerm)
-                    }
-                    catch ApiError.invalidURL {
-                        print ("invalid URL")
-                    }
-                    catch ApiError.invalidReponse {
-                        print ("invalid response")
-                    }
-                    catch ApiError.invalidData {
-                        print ("invalid data")
-                    }
-                    catch {
-                        print ("unexpected error")
+                    } catch ApiError.invalidURL {
+                        print("invalid URL")
+                    } catch ApiError.invalidReponse {
+                        print("invalid response")
+                    } catch ApiError.invalidData {
+                        print("invalid data")
+                    } catch {
+                        print("unexpected error")
                     }
                 }
             }
         }
+        .foregroundColor(.white)
         // API calls for pro player match data and dota hero/item data (on start of the app)
         .task {
             do {
@@ -98,7 +129,6 @@ struct SearchView: View {
                 print ("unexpected error")
             }
         }
-        .padding()
     }
 }
 

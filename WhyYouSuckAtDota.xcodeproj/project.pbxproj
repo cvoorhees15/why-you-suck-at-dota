@@ -20,6 +20,7 @@
 		B3CE70AB2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70AA2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift */; };
 		B3CE70AD2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70AC2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift */; };
 		B3CE70BA2C8E7B9100E39FC5 /* OpenDotaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */; };
+		B3F5177B2CE8FB3100033CCB /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F5177A2CE8FB3100033CCB /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +57,7 @@
 		B3CE70AA2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaUITests.swift; sourceTree = "<group>"; };
 		B3CE70AC2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenDotaService.swift; sourceTree = "<group>"; };
+		B3F5177A2CE8FB3100033CCB /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "../../../../Desktop/Launch Screen.storyboard"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -86,6 +88,7 @@
 		B30551BA2CBA1A140042803D /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				B3F5177A2CE8FB3100033CCB /* Launch Screen.storyboard */,
 				B35442402C911EA200278629 /* PlayerDataView.swift */,
 				B3CE70912C8E7B1100E39FC5 /* SearchView.swift */,
 			);
@@ -276,6 +279,7 @@
 				B35908982CB62C8100465F94 /* abilities.json in Resources */,
 				B35908962CB6201A00465F94 /* items.json in Resources */,
 				B3CE70972C8E7B1100E39FC5 /* Preview Assets.xcassets in Resources */,
+				B3F5177B2CE8FB3100033CCB /* Launch Screen.storyboard in Resources */,
 				B3B429B32CA79CF700F88656 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -475,6 +479,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -503,6 +508,7 @@
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UILaunchStoryboardName = "Launch Screen.storyboard";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (

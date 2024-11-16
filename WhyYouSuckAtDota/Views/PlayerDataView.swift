@@ -14,8 +14,9 @@ struct PlayerDataView: View {
     var ODS = OpenDotaService()
     var ODM = OpenDotaManager()
     
-    // Variables used for loading screen
+    // Variables used for view state
     @State var isViewLoading = false
+    @State var playerHasData = true
     
     // Params from SearchView
     @State var account_ID: Int
@@ -124,6 +125,12 @@ struct PlayerDataView: View {
                         .font(.title2)
                         .bold()
                         .padding(.top)
+                if (heroBuilds.isEmpty) {
+                    Text("No recent builds found for your heroes")
+                        .multilineTextAlignment(.center)
+                        .padding()
+                }
+                else {
                     // List recently played heroes by selected player
                     // TODO: net_worth isn't a true unique ID
                     ForEach(heroBuilds, id: \.net_worth) {
@@ -237,6 +244,7 @@ struct PlayerDataView: View {
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
+                }
                 Text("Why \(personaname) Sucks at Dota:")
                         .font(.title2)
                         .bold()
@@ -267,7 +275,7 @@ struct PlayerDataView: View {
                         .padding()
                 }
             }
-            .opacity(isViewLoading ? 0 : 1)
+            .opacity(isViewLoading || !playerHasData ? 0 : 1)
             
             VStack {
                 Text("Loading Player Data...")
@@ -280,6 +288,14 @@ struct PlayerDataView: View {
                     .scaleEffect(3)
             }
             .opacity(isViewLoading ? 1 : 0)
+            
+            VStack {
+                Text("No Dota match data found for the selected player")
+                    .font(.title)
+                    .padding()
+                    .multilineTextAlignment(.center)
+            }
+            .opacity(!playerHasData ? 1 : 0)
         }
         .task {
             do {
@@ -289,6 +305,9 @@ struct PlayerDataView: View {
                 // Fetch selected player information
                 playerAccountInfo = try await ODS.fetchAccount(accountID: account_ID)
                 playerMatches = try await ODS.fetchRecentMatches(accountId: account_ID)
+                
+                // Identify the selected steam account has dota match data
+                playerHasData = true
                 
                 // Pull a subset of selected player's matches
                 playerData = try await ODS.pullPlayerDataFromMatches(matchIDs: ODM.getRecentMatchIDs(recentMatches: playerMatches), accountID: account_ID)
@@ -319,6 +338,8 @@ struct PlayerDataView: View {
             }
             catch ApiError.invalidReponse {
                 print ("invalid response")
+                playerHasData = false
+                isViewLoading = false
             }
             catch ApiError.invalidData {
                 print ("invalid data")

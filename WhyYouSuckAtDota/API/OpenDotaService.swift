@@ -175,11 +175,13 @@ class OpenDotaService {
             print("Error in pullProDataFromMatches()")
             throw ApiError.noData
         }
-        // TODO: Loop once, do both tasks
-        // get first 20 pro match objects
+        
+        // Process match data
         for matchID in matchIDs {
             if (count < 20) {
+                // Get first 20 pro match objects
                 matches.append(try await fetchMatch(matchId: matchID))
+                // Get all players from those matches
                 proData.append(contentsOf: matches[count].players)
                 count+=1
             }
