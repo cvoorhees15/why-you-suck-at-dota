@@ -45,9 +45,31 @@ struct PlayerDataView: View {
     @State var heroData: [Hero] = []
     @State var itemData: [Item] = []
     
+    // Basic GroupBox style to make chart backgrounds transparent
+    struct PlainGroupBoxStyle: GroupBoxStyle {
+        func makeBody(configuration: Configuration) -> some View {
+            VStack(alignment: .leading) {
+                configuration.label
+                    .font(.headline)
+                    .foregroundColor(.white)
+                configuration.content
+                    .background(Color(.systemGray6).opacity(0.1))
+            }
+            .padding()
+            .background(Color(.systemGray6).opacity(0.1))
+            .cornerRadius(10)
+        }
+    }
     
     var body: some View {
         ZStack {
+            // Gradient background
+            LinearGradient(
+                gradient: Gradient(colors: [Color.main, Color.appSmudge]),
+                startPoint: .leading,
+                endPoint: .bottomTrailing
+            )
+            .ignoresSafeArea() // Ensure gradient fills the entire screen
             ScrollView
             {
                 VStack {
@@ -77,6 +99,7 @@ struct PlayerDataView: View {
 //                        .frame(width: 70, height: 70)
 //                        .clipShape(Circle())
                 }
+                .toolbarBackground(.main)
                 HStack {
                     GroupBox("Gold / Minute") {
                         Chart {
@@ -87,7 +110,32 @@ struct PlayerDataView: View {
                                     y: .value("GPM", proGPM))
                             .foregroundStyle(.red)
                         }
+                        .chartXAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
                     }
+                    .groupBoxStyle(PlainGroupBoxStyle())
                     GroupBox("XP / Minute") {
                         Chart {
                             BarMark(x: .value("Player XPM", "You"),
@@ -97,7 +145,32 @@ struct PlayerDataView: View {
                                     y: .value("XPM", proXPM))
                             .foregroundStyle(.red)
                         }
+                        .chartXAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
                     }
+                    .groupBoxStyle(PlainGroupBoxStyle())
                 }
                 HStack {
                     GroupBox("Net Worth") {
@@ -109,7 +182,32 @@ struct PlayerDataView: View {
                                     y: .value("Net Worth", proNW))
                             .foregroundStyle(.red)
                         }
+                        .chartXAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
                     }
+                    .groupBoxStyle(PlainGroupBoxStyle())
                     GroupBox("Last Hits") {
                         Chart {
                             BarMark(x: .value("Player LH", "You"),
@@ -119,9 +217,34 @@ struct PlayerDataView: View {
                                     y: .value("Last Hits", proLH))
                             .foregroundStyle(.red)
                         }
+                        .chartXAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks {
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisTick()
+                                    .foregroundStyle(.white)
+                                AxisValueLabel()
+                                    .foregroundStyle(.white)
+                                AxisGridLine()
+                                    .foregroundStyle(.white)
+                            }
+                        }
                     }
+                    .groupBoxStyle(PlainGroupBoxStyle())
                 }
-                    Text("Immortal Builds for Your Heroes")
+                    Text("Immortal Builds For Your Heroes")
                         .font(.title2)
                         .bold()
                         .padding(.top)
@@ -153,13 +276,13 @@ struct PlayerDataView: View {
                             HStack {
                                 Text("K: \(build.kills ?? 0)")
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.white)
                                 Text("D: \(build.deaths ?? 0)")
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.white)
                                 Text("A: \(build.assists ?? 0)")
                                     .font(.headline)
-                                    .foregroundColor(.primary)
+                                    .foregroundColor(.white)
                             }
                             
                             // Items (Horizontally aligned)
@@ -238,14 +361,14 @@ struct PlayerDataView: View {
                             }
                         }
                         .padding()
-                        .background(Color(.systemBackground))
+                        .background(Color(.systemGray6).opacity(0.1))
                         .cornerRadius(10)
                         .shadow(radius: 5)
                     }
                     .padding()
                     .frame(maxWidth: .infinity)
                 }
-                Text("Why \(personaname) Sucks at Dota:")
+                Text("Why \(personaname) Sucks At Dota")
                         .font(.title2)
                         .bold()
                         .multilineTextAlignment(.center)
@@ -290,7 +413,7 @@ struct PlayerDataView: View {
             .opacity(isViewLoading ? 1 : 0)
             
             VStack {
-                Text("No Dota match data found for the selected player")
+                Text("no match data found for the selected player")
                     .font(.title)
                     .padding()
                     .multilineTextAlignment(.center)
@@ -313,7 +436,6 @@ struct PlayerDataView: View {
                 playerData = try await ODS.pullPlayerDataFromMatches(matchIDs: ODM.getRecentMatchIDs(recentMatches: playerMatches), accountID: account_ID)
                 
                 // Get various metrics for selected player and pro players who play the same heroes
-                
                 // Selected Player
                 try playerGPM = ODM.getAverageGPM(data: playerData)
                 try playerXPM = ODM.getAverageXPM(data: playerData)

@@ -30,7 +30,7 @@ struct SearchView: View {
             ZStack {
                 // Gradient background
                 LinearGradient(
-                    gradient: Gradient(colors: [Color.main, Color.appRed]),
+                    gradient: Gradient(colors: [Color.main, Color.appSmudge]),
                     startPoint: .leading,
                     endPoint: .bottomTrailing
                 )
@@ -67,6 +67,7 @@ struct SearchView: View {
                     }
                     .foregroundColor(.white)
                     .padding(.vertical, 8)
+                    .padding(.horizontal, 8)
                     .background(Color(.main))
                     .cornerRadius(10)
                     .overlay(
@@ -84,9 +85,10 @@ struct SearchView: View {
                     Text("Player Search")
                         .font(.title)
                         .fontWeight(.bold)
-                        .foregroundColor(Color(.systemGray))
+                        .foregroundColor(Color(.white))
                 }
             }
+            .toolbarBackground(.main)
             .searchable(text: $searchTerm, prompt: "Enter Account Name")
             .onSubmit(of: .search) {
                 Task {
