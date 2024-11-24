@@ -10,6 +10,7 @@ import Foundation
 // Constants
 var OPEN_DOTA_URL = "https://api.opendota.com"
 var DOTA_CDN_URL = "https://cdn.dota2.com/apps/dota2/images"
+var API_KEY = Bundle.main.object(forInfoDictionaryKey: "API_KEY")
 
 // Error Enums
 // ***************************************************************************************************************************
@@ -22,7 +23,7 @@ enum ApiError: Error {
     case noData
 }
 
-// Open Dota API data objects // TODO: Add API keys
+// Open Dota API data objects
 // ***************************************************************************************************************************
 struct Account: Codable
 {
@@ -57,20 +58,20 @@ struct Player: Codable
     let xp_per_min: Int?
     let level: Int?
     let net_worth: Int?
-    let aghanims_scepter: Int? //Bool
-    let aghanims_shard: Int? //Bool
+    let aghanims_scepter: Int?
+    let aghanims_shard: Int?
     let hero_damage: Int?
     let tower_damage: Int?
     let hero_healing: Int?
     let ability_upgrades_arr: [Int]?
     let start_time: Int?
     let duration: Int?
-    let win: Int? //Bool
-    let lose: Int? //Bool
+    let win: Int?
+    let lose: Int?
     let total_gold: Int?
     let total_xp: Int?
-    //        let kills_per_min: Float?
-    //        let kda: Double?
+//    let kills_per_min: Float?
+//    let kda: Double?
 }
 
 struct SearchResult: Codable
@@ -110,23 +111,23 @@ struct Hero: Codable
 
 struct Item: Codable
 {
-//      let abilities: [Ability] (could add later)
-//      let hint: [String]
+//    let abilities: [Ability] (could add later)
+//    let hint: [String]
     let name: String
     let id: Int
     let img: String
     let dname: String?
     let qual: String?
     let cost: Int?
-//      let behavior: String
-//      let dmgType: String?
-//      let notes: String?
-//      let attrib: [Attribute] (could add later)
-//      let mc: Bool?
-//      let hc: Bool?
-//      let cd: Int?
-//      let lore: String?
-//      let components: [String]?
-//      let created: Bool?
-//      let charges: Bool?
+//    let behavior: String
+//    let dmgType: String?
+//    let notes: String?
+//    let attrib: [Attribute] (could add later)
+//    let mc: Bool?
+//    let hc: Bool?
+//    let cd: Int?
+//    let lore: String?
+//    let components: [String]?
+//    let created: Bool?
+//    let charges: Bool?
 }

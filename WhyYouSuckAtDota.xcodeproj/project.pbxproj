@@ -20,7 +20,7 @@
 		B3CE70AB2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70AA2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift */; };
 		B3CE70AD2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70AC2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift */; };
 		B3CE70BA2C8E7B9100E39FC5 /* OpenDotaService.swift in Sources */ = {isa = PBXBuildFile; fileRef = B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */; };
-		B3F5177B2CE8FB3100033CCB /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3F5177A2CE8FB3100033CCB /* Launch Screen.storyboard */; };
+		B3FAEBA32CEC1D6100103CE3 /* Launch Screen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = B3FAEBA22CEC1D6100103CE3 /* Launch Screen.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -57,7 +57,9 @@
 		B3CE70AA2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaUITests.swift; sourceTree = "<group>"; };
 		B3CE70AC2C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhyYouSuckAtDotaUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		B3CE70B92C8E7B9100E39FC5 /* OpenDotaService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OpenDotaService.swift; sourceTree = "<group>"; };
-		B3F5177A2CE8FB3100033CCB /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = "Launch Screen.storyboard"; path = "../../../../Desktop/Launch Screen.storyboard"; sourceTree = "<group>"; };
+		B3FAEBA22CEC1D6100103CE3 /* Launch Screen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = "Launch Screen.storyboard"; sourceTree = "<group>"; };
+		B3FAEBA42CEC1DD600103CE3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		B3FAEBA62CEC22CB00103CE3 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -88,7 +90,7 @@
 		B30551BA2CBA1A140042803D /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				B3F5177A2CE8FB3100033CCB /* Launch Screen.storyboard */,
+				B3FAEBA22CEC1D6100103CE3 /* Launch Screen.storyboard */,
 				B35442402C911EA200278629 /* PlayerDataView.swift */,
 				B3CE70912C8E7B1100E39FC5 /* SearchView.swift */,
 			);
@@ -117,6 +119,7 @@
 		B3CE70832C8E7B1100E39FC5 = {
 			isa = PBXGroup;
 			children = (
+				B3FAEBA62CEC22CB00103CE3 /* Config.xcconfig */,
 				B3CE708E2C8E7B1100E39FC5 /* WhyYouSuckAtDota */,
 				B3CE709F2C8E7B1100E39FC5 /* WhyYouSuckAtDotaTests */,
 				B3CE70A92C8E7B1100E39FC5 /* WhyYouSuckAtDotaUITests */,
@@ -137,6 +140,7 @@
 		B3CE708E2C8E7B1100E39FC5 /* WhyYouSuckAtDota */ = {
 			isa = PBXGroup;
 			children = (
+				B3FAEBA42CEC1DD600103CE3 /* Info.plist */,
 				B30551BD2CBA226A0042803D /* API */,
 				B30551BA2CBA1A140042803D /* Views */,
 				B34181D12CB36BF4008FFB3A /* Static Data */,
@@ -276,10 +280,10 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B3FAEBA32CEC1D6100103CE3 /* Launch Screen.storyboard in Resources */,
 				B35908982CB62C8100465F94 /* abilities.json in Resources */,
 				B35908962CB6201A00465F94 /* items.json in Resources */,
 				B3CE70972C8E7B1100E39FC5 /* Preview Assets.xcassets in Resources */,
-				B3F5177B2CE8FB3100033CCB /* Launch Screen.storyboard in Resources */,
 				B3B429B32CA79CF700F88656 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -349,6 +353,7 @@
 /* Begin XCBuildConfiguration section */
 		B3CE70AE2C8E7B1100E39FC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3FAEBA62CEC22CB00103CE3 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -412,6 +417,7 @@
 		};
 		B3CE70AF2C8E7B1100E39FC5 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = B3FAEBA62CEC22CB00103CE3 /* Config.xcconfig */;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
@@ -469,6 +475,7 @@
 		B3CE70B12C8E7B1100E39FC5 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				API_KEY = "06a71939-e0dc-4a75-91b3-d8a0be38e2a7";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -476,6 +483,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"WhyYouSuckAtDota/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WhyYouSuckAtDota/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -498,6 +506,7 @@
 		B3CE70B22C8E7B1100E39FC5 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				API_KEY = "06a71939-e0dc-4a75-91b3-d8a0be38e2a7";
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
@@ -505,6 +514,7 @@
 				DEVELOPMENT_ASSET_PATHS = "\"WhyYouSuckAtDota/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WhyYouSuckAtDota/Info.plist;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

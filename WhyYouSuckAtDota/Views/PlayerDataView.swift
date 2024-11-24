@@ -93,11 +93,6 @@ struct PlayerDataView: View {
                         .resizable()
                         .frame(width: 70, height: 70)
                         .clipShape(Circle())
-//                    FIXME: Pushing contents off screen
-//                    Image(ODM.getRankStarImage(rankTier: playerAccountInfo?.rank_tier ?? 0))
-//                        .resizable()
-//                        .frame(width: 70, height: 70)
-//                        .clipShape(Circle())
                 }
                 .toolbarBackground(.main)
                 HStack {
@@ -255,7 +250,6 @@ struct PlayerDataView: View {
                 }
                 else {
                     // List recently played heroes by selected player
-                    // TODO: net_worth isn't a true unique ID
                     ForEach(heroBuilds, id: \.net_worth) {
                         build in
                         VStack(alignment: .center, spacing: 10) {

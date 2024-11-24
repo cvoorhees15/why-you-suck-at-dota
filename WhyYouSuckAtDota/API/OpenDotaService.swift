@@ -35,7 +35,7 @@ class OpenDotaService {
     
     func fetchAccount(accountID: Int) async throws -> Account
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/players/\(accountID)")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/players/\(accountID)?api_key=\(API_KEY ?? "")")
         
         // Translate JSON response from API call
         do {
@@ -49,7 +49,7 @@ class OpenDotaService {
     
     func fetchSearchResults(personaname: String) async throws -> [SearchResult]
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/search/?q=\(personaname)")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/search/?q=\(personaname)?api_key=\(API_KEY ?? "")")
         
         // Translate JSON response from API call
         do {
@@ -63,7 +63,7 @@ class OpenDotaService {
     
     func fetchMatch(matchId: Int) async throws -> Match
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/matches/\(matchId)")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/matches/\(matchId)?api_key=\(API_KEY ?? "")")
         
         // Translate JSON response from API call
         do {
@@ -77,7 +77,7 @@ class OpenDotaService {
     
     func fetchRecentMatches(accountId: Int) async throws -> [RecentMatch]
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/players/\(accountId)/recentMatches")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/players/\(accountId)/recentMatches?api_key=\(API_KEY ?? "")")
         
         // Translate JSON response from API call
         do {
@@ -105,7 +105,7 @@ class OpenDotaService {
     
     func fetchDotaHeroes() async throws -> [Hero]
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/heroes")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/heroes?api_key=\(API_KEY ?? "")")
         
         // Translate JSON response from API call
         do {

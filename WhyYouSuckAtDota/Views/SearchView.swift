@@ -110,7 +110,6 @@ struct SearchView: View {
         // API calls for pro player match data and dota hero/item data (on start of the app)
         .task {
             do {
-                // TODO: Get this data ONCE at the beginning of the session (these are all getting called THREE times on startup)
                 itemData = try ODS.fetchDotaItems()
                 proMatches = try await ODS.fetchProPubMatches()
                 heroData = try await ODS.fetchDotaHeroes()
