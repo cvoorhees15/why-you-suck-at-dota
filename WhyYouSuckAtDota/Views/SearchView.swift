@@ -14,6 +14,7 @@ struct SearchView: View {
     
     // Stores user search bar input
     @State private var searchTerm = ""
+    @State private var listLoaded = true
     
     // Data from API calls
     @State private var profile: Profile?
@@ -35,6 +36,20 @@ struct SearchView: View {
                     endPoint: .bottomTrailing
                 )
                 .ignoresSafeArea() // Ensure gradient fills the entire screen
+                
+                if (!listLoaded) {
+                    VStack {
+                        Text("error searching for player")
+                            .multilineTextAlignment(.center)
+                            .font(.title2)
+                            .bold()
+                            .padding()
+                        Text("ensure device is connected to the internet")
+                            .multilineTextAlignment(.center)
+                            .font(.title2)
+                            .bold()
+                    }
+                }
                 
                 // List of persona name search results
                 List(searchResults, id: \.account_id) { searchResult in
@@ -94,14 +109,19 @@ struct SearchView: View {
                 Task {
                     do {
                         searchResults = try await ODS.fetchSearchResults(personaname: searchTerm)
+                        listLoaded = true
                     } catch ApiError.invalidURL {
                         print("invalid URL")
+                        listLoaded = false
                     } catch ApiError.invalidReponse {
                         print("invalid response")
+                        listLoaded = false
                     } catch ApiError.invalidData {
                         print("invalid data")
+                        listLoaded = false
                     } catch {
                         print("unexpected error")
+                        listLoaded = false
                     }
                 }
             }

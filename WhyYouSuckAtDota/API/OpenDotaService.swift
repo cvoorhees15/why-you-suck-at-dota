@@ -91,7 +91,7 @@ class OpenDotaService {
     
     func fetchProPubMatches() async throws -> [ProMatch]
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/publicMatches/?min_rank=81")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/publicMatches/?api_key=\(API_KEY ?? "")?min_rank=81")
         
         // Translate JSON response from API call
         do {
