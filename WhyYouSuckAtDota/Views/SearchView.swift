@@ -12,13 +12,17 @@ struct SearchView: View {
     var ODS = OpenDotaService()
     var ODM = OpenDotaManager()
     
-    // Stores user search bar input
-    @State private var searchTerm = ""
-    @State private var listLoaded = true
+    // Search term variables
+    @State private var searchName = ""
+    @State private var searchId = ""
+    
+    // UI state keeper
+    @State private var viewState: SearchViewState = SearchViewState.idle
     
     // Data from API calls
     @State private var profile: Profile?
-    @State private var searchResults: [SearchResult] = []
+    @State private var nameSearchResults: [SearchResult] = []
+    @State private var accountSearchResult: Account?
     @State var proData: [Player] = []
     @State var proMatches: [ProMatch] = []
     @State var heroData: [Hero] = []
@@ -37,7 +41,8 @@ struct SearchView: View {
                 )
                 .ignoresSafeArea() // Ensure gradient fills the entire screen
                 
-                if (!listLoaded) {
+                // Display error message if search results cannot load
+                if (viewState == SearchViewState.idSearchError || viewState == SearchViewState.nameSearchError) {
                     VStack {
                         Text("error searching for player")
                             .multilineTextAlignment(.center)
@@ -50,9 +55,83 @@ struct SearchView: View {
                             .bold()
                     }
                 }
+                VStack {
+                    // Text input field for searching by ID
+                    // Shows a navigation link if a valid player is found
+                    HStack {
+                        Image(systemName: "magnifyingglass")
+                            .foregroundColor(.gray.opacity(0.15))
+                        TextField("", text: $searchId, prompt: Text("Search By Steam Friend ID").foregroundColor(.gray.opacity(0.15)))
+                            .textFieldStyle(PlainTextFieldStyle())
+                            .autocorrectionDisabled(true)
+                            .disableAutocorrection(true)
+                            // Attempt to fetch the account on submission of an ID
+                            .onSubmit {
+                                if !searchId.isEmpty {
+                                    viewState = SearchViewState.idSearchSuccessful
+                                    Task {
+                                        do {
+                                            accountSearchResult = try await ODS.fetchAccount(accountID: Int(searchId) ?? 0)
+                                            viewState = SearchViewState.idSearchSuccessful
+                                        } catch ApiError.invalidURL {
+                                            print("invalid URL")
+                                            viewState = SearchViewState.idSearchError
+                                        } catch ApiError.invalidReponse {
+                                            print("invalid response")
+                                            viewState = SearchViewState.idSearchError
+                                        } catch ApiError.invalidData {
+                                            print("invalid data")
+                                            viewState = SearchViewState.idSearchError
+                                        } catch {
+                                            print("unexpected error")
+                                            viewState = SearchViewState.idSearchError
+                                        }
+                                    }
+                                }
+                            }
+                    }
+                .padding(7)
+                .background(
+                    RoundedRectangle(cornerRadius: 10)
+                        .fill(Color(.systemGray5).opacity(0.05))
+                )
+                .overlay(
+                    RoundedRectangle(cornerRadius: 10)
+                        .stroke(Color(.systemGray3), lineWidth: 0)
+                )
+                .padding(.horizontal)
+                    // If the user ID search was succsessful, show nav link to go view the players stats
+                    if (viewState == SearchViewState.idSearchSuccessful) {
+                        VStack {
+                            if (accountSearchResult?.profile.personaname != "") {
+                                Text("tap user to continue")
+                                    .font(.title)
+                                    .bold()
+                                    .padding()
+                            }
+                            // Pass data to PlayerDataView:
+                            // ---------------------------
+                            // SELECTED PLAYER DATA: acc id, name, pro pic
+                            // CONSTANT DATA: heroes, pro player matches, items
+                            NavigationLink(
+                                accountSearchResult?.profile.personaname ?? "",
+                                destination: PlayerDataView(
+                                    account_ID: Int(searchId) ?? 0,
+                                    personaname: accountSearchResult?.profile.personaname ?? "",
+                                    profilePic: accountSearchResult?.profile.avatarfull ?? "",
+                                    proData: proData,
+                                    heroData: heroData,
+                                    itemData: itemData
+                                )
+                            )
+                            .font(.title3)
+                            .italic()
+                            .padding()
+                        }
+                    }
                 
-                // List of persona name search results
-                List(searchResults, id: \.account_id) { searchResult in
+                // Search input field to list steam accounts based on search term
+                List(nameSearchResults, id: \.account_id) { searchResult in
                     HStack(spacing: 20) {
                         AsyncImage(url: URL(string: searchResult.avatarfull)) { avatar in
                             avatar
@@ -65,7 +144,10 @@ struct SearchView: View {
                         }
                         .frame(width: 44, height: 44)
                         
-                        // NavigationLink for player details
+                        // Pass data to PlayerDataView:
+                        // ---------------------------
+                        // SELECTED PLAYER DATA: acc id, name, pro pic
+                        // CONSTANT DATA: heroes, pro player matches, items
                         NavigationLink(
                             searchResult.personaname,
                             destination: PlayerDataView(
@@ -94,6 +176,8 @@ struct SearchView: View {
                 }
                 .listStyle(.plain)
                 .scrollContentBackground(.hidden) // Removes the default List background
+                .opacity(viewState != SearchViewState.nameSearchSuccessful ? 0 : 1)
+            }
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
@@ -104,24 +188,25 @@ struct SearchView: View {
                 }
             }
             .toolbarBackground(.main)
-            .searchable(text: $searchTerm, prompt: "Enter Account Name")
+            .searchable(text: $searchName, prompt: "Search By Account Name")
+            // Attempt to fetch the search results on submission of a search term
             .onSubmit(of: .search) {
                 Task {
                     do {
-                        searchResults = try await ODS.fetchSearchResults(personaname: searchTerm)
-                        listLoaded = true
+                        nameSearchResults = try await ODS.fetchSearchResults(personaname: searchName)
+                        viewState = SearchViewState.nameSearchSuccessful
                     } catch ApiError.invalidURL {
                         print("invalid URL")
-                        listLoaded = false
+                        viewState = SearchViewState.nameSearchError
                     } catch ApiError.invalidReponse {
                         print("invalid response")
-                        listLoaded = false
+                        viewState = SearchViewState.nameSearchError
                     } catch ApiError.invalidData {
                         print("invalid data")
-                        listLoaded = false
+                        viewState = SearchViewState.nameSearchError
                     } catch {
                         print("unexpected error")
-                        listLoaded = false
+                        viewState = SearchViewState.nameSearchError
                     }
                 }
             }

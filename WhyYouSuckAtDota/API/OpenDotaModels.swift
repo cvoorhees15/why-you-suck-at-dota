@@ -23,6 +23,14 @@ enum ApiError: Error {
     case noData
 }
 
+enum SearchViewState: Int {
+    case idle = 0
+    case idSearchSuccessful = 1
+    case idSearchError = 2
+    case nameSearchSuccessful = 3
+    case nameSearchError = 4
+}
+
 // Open Dota API data objects
 // ***************************************************************************************************************************
 struct Account: Codable
@@ -34,6 +42,8 @@ struct Account: Codable
 struct Profile: Codable
 {
     let account_id: Int
+    let personaname: String?
+    let avatarfull: String?
 }
 
 struct Player: Codable
