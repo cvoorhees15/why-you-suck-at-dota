@@ -215,7 +215,7 @@ class OpenDotaManager {
         
         // Collect pro player builds for selected players most played heroes
         for pro in data {
-            if (topThree.contains(where: ({$0.key == pro.hero_id}))) {
+            if (topThree.contains(where: ({$0.key == pro.hero_id})) && pro.win == 1) {
                 heroBuilds.append(pro)
             }
         }

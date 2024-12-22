@@ -104,7 +104,7 @@ struct SearchView: View {
                     if (viewState == SearchViewState.idSearchSuccessful) {
                         VStack {
                             if (accountSearchResult?.profile.personaname != "") {
-                                Text("tap user to continue")
+                                Text("tap username to continue")
                                     .font(.title)
                                     .bold()
                                     .padding()

@@ -27,6 +27,7 @@ class OpenDotaService {
         // Translate HTTP response from API call
         if let response = response as? HTTPURLResponse, response.statusCode != 200 {
             print("OpenDota API call response: \(response.statusCode)")
+            print("Endpoint: \(endpoint)")
             throw ApiError.invalidReponse
         }
         
@@ -91,7 +92,7 @@ class OpenDotaService {
     
     func fetchProPubMatches() async throws -> [ProMatch]
     {
-        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/publicMatches/?api_key=\(API_KEY ?? "")?min_rank=81")
+        let data = try await openDotaAPICall(endpoint: "\(OPEN_DOTA_URL)/api/publicMatches/?min_rank=81")
         
         // Translate JSON response from API call
         do {
