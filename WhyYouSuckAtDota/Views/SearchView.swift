@@ -93,11 +93,11 @@ struct SearchView: View {
                 .padding(7)
                 .background(
                     RoundedRectangle(cornerRadius: 10)
-                        .fill(Color(.systemGray5).opacity(0.05))
+                        .fill(Color(.gray).opacity(0.1))
                 )
                 .overlay(
                     RoundedRectangle(cornerRadius: 10)
-                        .stroke(Color(.systemGray3), lineWidth: 0)
+                        .stroke(Color(.gray), lineWidth: 0)
                 )
                 .padding(.horizontal)
                     // If the user ID search was succsessful, show nav link to go view the players stats
@@ -106,7 +106,6 @@ struct SearchView: View {
                             if (accountSearchResult?.profile.personaname != "") {
                                 Text("tap username to continue")
                                     .font(.title)
-                                    .bold()
                                     .padding()
                             }
                             // Pass data to PlayerDataView:
@@ -127,6 +126,7 @@ struct SearchView: View {
                             .font(.title3)
                             .italic()
                             .padding()
+                            .foregroundColor(.blue)
                         }
                     }
                 
@@ -154,7 +154,6 @@ struct SearchView: View {
                                 account_ID: searchResult.account_id,
                                 personaname: searchResult.personaname,
                                 profilePic: searchResult.avatarfull,
-                                proData: proData,
                                 heroData: heroData,
                                 itemData: itemData
                             )
@@ -169,7 +168,7 @@ struct SearchView: View {
                     .cornerRadius(10)
                     .overlay(
                         RoundedRectangle(cornerRadius: 10)
-                            .stroke(Color(.systemGray3), lineWidth: 1)
+                            .stroke(Color(.gray), lineWidth: 1)
                     )
                     .listRowBackground(Color.clear) // Clear background for list rows
                     .listRowSeparator(.hidden) // Hide row separators
@@ -218,9 +217,6 @@ struct SearchView: View {
                 itemData = try ODS.fetchDotaItems()
                 proMatches = try await ODS.fetchProPubMatches()
                 heroData = try await ODS.fetchDotaHeroes()
-                
-                // Pull a subset of data
-                proData = try await ODS.pullProDataFromMatches(matchIDs: ODM.getProMatchIDs(proMatches: proMatches))
             }
             catch ApiError.invalidURL {
                 print ("invalid URL")

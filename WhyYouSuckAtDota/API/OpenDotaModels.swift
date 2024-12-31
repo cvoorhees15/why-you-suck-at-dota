@@ -84,6 +84,18 @@ struct Player: Codable
 //    let kda: Double?
 }
 
+struct HeroRankings: Codable
+{
+    let hero_id: Int
+    let rankings: [RankedPlayer]
+}
+
+struct RankedPlayer: Codable
+{
+    let account_id: Int
+    let rank_tier: Int?
+}
+
 struct SearchResult: Codable
 {
     let account_id: Int
@@ -104,8 +116,6 @@ struct RecentMatch: Codable
 struct ProMatch: Codable
 {
     let match_id: Int
-    let radiant_team: [Int]
-    let dire_team: [Int]
 }
 
 struct Hero: Codable

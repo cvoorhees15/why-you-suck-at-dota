@@ -164,20 +164,22 @@ class OpenDotaManager {
         return LH
     }
     
-    // Determine the heros played by the provided players
+    // Determine the heroes recently played in the provided player matchs
     // Return dict [hero id : games played]
-    func getHeroes(data: [Player], heroes: [Hero]) throws -> Array<(key: Int, value: Int)>
+    func getCommonHeroes(playerMatchData: [Player], heroes: [Hero]) throws -> [Int]
     {
         // <Hero ID, Number of matches played>
         var heroesPlayed: Dictionary<Int, Int> = [:]
         
+        var heroIds: [Int] = []
+        
         // If we didn't receive data get out
-        if (data.isEmpty) {
+        if (playerMatchData.isEmpty) {
             print("Error in getHeroes()")
             throw ApiError.noData
         }
         
-        for player in data {
+        for player in playerMatchData {
             // If the played hero hasnt been added to the dictionary yet add it
             if !heroesPlayed.keys.contains(player.hero_id) {
                 heroesPlayed.updateValue(0, forKey: player.hero_id)
@@ -187,13 +189,18 @@ class OpenDotaManager {
         }
         
         // Sort from most played to least played
-        return heroesPlayed.sorted(by: {$0.value > $1.value})
+        let heroesSorted = heroesPlayed.sorted(by: {$0.value > $1.value})
+        
+        for hero in heroesSorted {
+            heroIds.append(hero.key)
+        }
+        return heroIds
     }
     
     // Get comparable pro builds based on heroes the selected player plays
-    func getHeroBuilds(data: [Player], playerHeroes: Array<(key: Int, value: Int)>) throws -> [Player]
+    func getHeroBuilds(data: [Player], playerHeroes: [Int]) throws -> [Player]
     {
-        var topThree: Array<(key: Int, value: Int)> = []
+        var topThree: [Int] = []
         var heroBuilds: [Player] = []
         
         // If we didn't receive data get out
@@ -205,7 +212,7 @@ class OpenDotaManager {
         // Grab the selected player's top three most played heroes
         // This assumes that 'playerHeroes' comes sorted (from most played to least played)
         for i in 0...2 {
-            topThree.append((key: playerHeroes[i].key, value: playerHeroes[i].value))
+            topThree.append(playerHeroes[i])
             
             // break early if there are no more heroes in the list
             if (playerHeroes.count == i+1) {
@@ -215,7 +222,7 @@ class OpenDotaManager {
         
         // Collect pro player builds for selected players most played heroes
         for pro in data {
-            if (topThree.contains(where: ({$0.key == pro.hero_id})) && pro.win == 1) {
+            if (topThree.contains(where: ({$0 == pro.hero_id})) && pro.win == 1) {
                 heroBuilds.append(pro)
             }
         }

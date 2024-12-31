@@ -23,6 +23,9 @@ struct PlayerDataView: View {
     @State var personaname: String
     @State var profilePic: String
     @State var proData: [Player] = []
+    @State var topProPlayers: Int = 0
+    @State var topProMatches: Dictionary<Int, [Int]> = [:]
+    @State var allProMatches: [Int] = []
     
     // Selected player and pro player data used for determining why the selected player sucks
     @State var playerAccountInfo: Account?
@@ -34,8 +37,7 @@ struct PlayerDataView: View {
     @State var proXPM = 0
     @State var proNW = 0
     @State var proLH = 0
-    @State var playerHeroesPlayed: Array<(key: Int, value: Int)> = []
-    @State var proHeroesPlayed: Array<(key: Int, value: Int)> = []
+    @State var playerCommonHeroes: [Int] = []
     @State var heroBuilds: [Player] = []
     
     // Data from API calls
@@ -53,10 +55,10 @@ struct PlayerDataView: View {
                     .font(.headline)
                     .foregroundColor(.white)
                 configuration.content
-                    .background(Color(.systemGray6).opacity(0.1))
+                    .background(Color(.gray).opacity(0.1))
             }
             .padding()
-            .background(Color(.systemGray6).opacity(0.1))
+            .background(Color(.gray).opacity(0.1))
             .cornerRadius(10)
         }
     }
@@ -243,14 +245,14 @@ struct PlayerDataView: View {
                         .font(.title2)
                         .bold()
                         .padding(.top)
-                if (heroBuilds.isEmpty) {
+                if (proData.isEmpty) {
                     Text("No recent builds found for your heroes")
                         .multilineTextAlignment(.center)
                         .padding()
                 }
                 else {
                     // List recently played heroes by selected player
-                    ForEach(heroBuilds, id: \.net_worth) {
+                    ForEach(proData, id: \.net_worth) {
                         build in
                         VStack(alignment: .center, spacing: 10) {
                             // Hero Image
@@ -355,7 +357,7 @@ struct PlayerDataView: View {
                             }
                         }
                         .padding()
-                        .background(Color(.systemGray6).opacity(0.1))
+                        .background(Color(.gray).opacity(0.1))
                         .cornerRadius(10)
                         .shadow(radius: 5)
                     }
@@ -395,14 +397,17 @@ struct PlayerDataView: View {
             .opacity(isViewLoading || !playerHasData ? 0 : 1)
             
             VStack {
-                Text("Loading Player Data...")
+                Text("Loading Player Data")
                     .font(.title)
+                    .padding()
+                    .multilineTextAlignment(.center)
+                Text("this could take up to one minute")
                     .padding()
                     .multilineTextAlignment(.center)
                 ProgressView()
                     .padding()
                     .frame(width:100, height: 100)
-                    .scaleEffect(3)
+                    .scaleEffect(2)
             }
             .opacity(isViewLoading ? 1 : 0)
             
@@ -416,15 +421,16 @@ struct PlayerDataView: View {
         }
         .task {
             do {
-                // Reset variables used for loading screen
+                // Turn on loading screen
                 isViewLoading = true
                 
+                // GET SELECTED PLAYER INFO
+                // ***
                 // Fetch selected player information
                 playerAccountInfo = try await ODS.fetchAccount(accountID: account_ID)
                 playerMatches = try await ODS.fetchRecentMatches(accountId: account_ID)
                 
-                // Identify the selected steam account has dota match data
-                playerHasData = true
+                playerHasData = true // If we get this far inform the UI we were able to fetch player account/match data successfully
                 
                 // Pull a subset of selected player's matches
                 playerData = try await ODS.pullPlayerDataFromMatches(matchIDs: ODM.getRecentMatchIDs(recentMatches: playerMatches), accountID: account_ID)
@@ -435,15 +441,17 @@ struct PlayerDataView: View {
                 try playerXPM = ODM.getAverageXPM(data: playerData)
                 try playerNW = ODM.getAverageNetWorth(data: playerData)
                 try playerLH = ODM.getAverageLastHits(data: playerData)
-                try playerHeroesPlayed = ODM.getHeroes(data: playerData, heroes: heroData)
+                try playerCommonHeroes = ODM.getCommonHeroes(playerMatchData: playerData, heroes: heroData)
                 
-                // Pro player
-                try proHeroesPlayed = ODM.getHeroes(data: proData, heroes: heroData)
-                try heroBuilds = ODM.getHeroBuilds(data: proData, playerHeroes: playerHeroesPlayed)
-                try proGPM = ODM.getAverageGPM(data: heroBuilds)
-                try proXPM = ODM.getAverageGPM(data: heroBuilds)
-                try proNW = ODM.getAverageNetWorth(data: heroBuilds)
-                try proLH = ODM.getAverageLastHits(data: heroBuilds)
+                // GET PRO PLAYER INFO (relative to selected players recently played heroes)
+                // ***
+                // Fetch top ranked players for three of the selected players common heroes
+                topProMatches = try await ODS.pullMatchesForPlayerOnHero(topPlayersForHeroes: ODS.pullTopRankPlayersForHeroes(heroIDs: playerCommonHeroes))
+                proData = try await ODS.pullProDataFromMatches(topPlayersRecentMatches: topProMatches)
+                try proGPM = ODM.getAverageGPM(data: proData)
+                try proXPM = ODM.getAverageGPM(data: proData)
+                try proNW = ODM.getAverageNetWorth(data: proData)
+                try proLH = ODM.getAverageLastHits(data: proData)
                 
                 // Turns off loading screen
                 isViewLoading = false
@@ -459,17 +467,15 @@ struct PlayerDataView: View {
             }
             catch ApiError.invalidData {
                 print ("invalid data")
+                playerHasData = false
             }
             catch ApiError.noData {
                 print ("No match data for the selected player")
+                playerHasData = false
             }
             catch {
                 print ("unexpected error")
             }
         }
     }
-}
-
-#Preview {
-    PlayerDataView(account_ID: 0, personaname: "Tilted Warlord", profilePic: "", proData: [])
 }
